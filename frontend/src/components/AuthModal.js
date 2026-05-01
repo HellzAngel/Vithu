@@ -3,9 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiUser, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
 import Logo from './Logo';
 
-const AuthModal = ({ isOpen, onClose }) => {
-  const [role, setRole] = useState('customer');
+const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
+  const [role, setRole] = React.useState(initialRole);
   const [isLogin, setIsLogin] = useState(true);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setRole(initialRole);
+    }
+  }, [isOpen, initialRole]);
 
   if (!isOpen) return null;
 

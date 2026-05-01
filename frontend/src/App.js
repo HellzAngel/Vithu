@@ -19,6 +19,7 @@ import AuthModal from './components/AuthModal';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authInitialRole, setAuthInitialRole] = useState('customer');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cart, setCart] = useState(() => {
@@ -42,7 +43,14 @@ function App() {
 
   // Global listeners for modals
   useEffect(() => {
-    const handleOpenAuth = () => setIsAuthModalOpen(true);
+    const handleOpenAuth = (e) => {
+      if (e.detail && typeof e.detail === 'string') {
+        setAuthInitialRole(e.detail);
+      } else {
+        setAuthInitialRole('customer');
+      }
+      setIsAuthModalOpen(true);
+    };
     const handleOpenCart = () => setIsCartOpen(true);
     const handleToggleMenu = () => setIsMenuOpen(prev => !prev);
     const handleNotify = (e) => setNotification(e.detail);
@@ -105,7 +113,7 @@ function App() {
         {isLoading && <LoadingScreen key="loader" />}
       </AnimatePresence>
 
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialRole={authInitialRole} />
 
       {/* Global Confirmation Modal */}
       <AnimatePresence>

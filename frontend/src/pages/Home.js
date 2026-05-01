@@ -25,9 +25,12 @@ const Home = () => {
           <Link to="/products" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
             Start Shopping <FiArrowRight />
           </Link>
-          <Link to="/login" className="bg-white hover:bg-gray-50 text-emerald-800 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-md hover:shadow-lg border border-gray-200">
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: 'farmer' }))} 
+            className="bg-white hover:bg-gray-50 text-emerald-800 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-md hover:shadow-lg border border-gray-200"
+          >
             Join as a Farmer
-          </Link>
+          </button>
         </div>
       </div>
 
