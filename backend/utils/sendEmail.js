@@ -11,6 +11,7 @@ const sendEmail = async (options) => {
     return;
   }
 
+  console.log(`📧 Attempting to send email via ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT || 587}...`);
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: parseInt(process.env.EMAIL_PORT) || 587,
@@ -19,8 +20,8 @@ const sendEmail = async (options) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    connectionTimeout: 10000, // 10 seconds
-    family: 4, // Force IPv4 to avoid ENETUNREACH errors on IPv6
+    connectionTimeout: 15000, // 15 seconds
+    family: 4, // Force IPv4
   });
 
   const message = {
