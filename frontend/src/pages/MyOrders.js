@@ -73,7 +73,6 @@ const MyOrders = () => {
                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest whitespace-nowrap">Status: {trackingOrder.status}</p>
                   </div>
                </div>
-               </div>
 
                <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
