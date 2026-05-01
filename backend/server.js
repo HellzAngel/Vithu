@@ -35,8 +35,9 @@ app.use('/api/admin',    require('./routes/admin'));
 app.use('/api/reviews',  require('./routes/reviews'));
 app.use('/api/upload',   require('./routes/upload'));
 
-// Health check
+// Health check & Root
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'Delveri API running' }));
+app.get('/', (req, res) => res.send('🌾 Delveri Backend is Live! Use /api/products or other endpoints.'));
 
 // ── Error Handler ───────────────────────────────────────────
 app.use((err, req, res, next) => {
