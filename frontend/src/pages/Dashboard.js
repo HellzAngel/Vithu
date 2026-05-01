@@ -343,7 +343,7 @@ const Dashboard = () => {
                       <tr key={product.id} className="bg-gray-50/50 rounded-3xl hover:bg-white hover:shadow-2xl transition-all group">
                         <td className="px-6 py-6 rounded-l-[30px] flex items-center gap-6 border-l border-t border-b border-transparent group-hover:border-emerald-100">
                           <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border-2 border-white">
-                             <img src={product.image} alt={product.name} className="w-full h-full object-cover"/>
+                             <img src={product.image.startsWith("http") ? product.image : "https://vithu.onrender.com" + product.image} alt={product.name} className="w-full h-full object-cover"/>
                           </div>
                           <div>
                             <p className="font-black text-gray-900 text-lg">{product.name}</p>

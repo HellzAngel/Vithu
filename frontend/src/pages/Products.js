@@ -115,7 +115,7 @@ const Products = () => {
           <div key={product.id} className="bg-white rounded-[40px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group border border-gray-50 flex flex-col h-full">
             <div className="h-64 overflow-hidden relative">
               <img 
-                src={product.image} 
+                src={product.image.startsWith("http") ? product.image : "https://vithu.onrender.com" + product.image} 
                 alt={product.name} 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               />
