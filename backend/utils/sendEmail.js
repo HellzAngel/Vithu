@@ -19,7 +19,8 @@ const sendEmail = async (options) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    connectionTimeout: 5000, // 5 seconds
+    connectionTimeout: 10000, // 10 seconds
+    family: 4, // Force IPv4 to avoid ENETUNREACH errors on IPv6
   });
 
   const message = {
