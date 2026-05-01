@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheckCircle, FiCreditCard, FiMapPin, FiTruck, FiChevronRight, FiShoppingBag, FiX } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import { FiCheckCircle, FiCreditCard, FiMapPin, FiTruck, FiChevronRight, FiShoppingBag } from 'react-icons/fi';
 
 const Checkout = () => {
   const [step, setStep] = useState(1);

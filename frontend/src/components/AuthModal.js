@@ -1,50 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUser, FiBriefcase, FiLock, FiMail, FiArrowRight, FiX } from 'react-icons/fi';
+import { FiUser, FiBriefcase, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
 import Logo from './Logo';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [role, setRole] = useState('customer');
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    farmName: '',
-    city: 'Kerala'
-  });
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-    
-    try {
-      const res = await fetch(`https://vithu.onrender.com${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, role })
-      });
-      const data = await res.json();
-      
-      if (data.success) {
-        localStorage.setItem('vithu_token', data.token);
-        localStorage.setItem('vithu_role', data.user.role);
-        localStorage.setItem('vithu_user', JSON.stringify(data.user));
-        
-        if (data.user.role === 'farmer') {
-          window.location.href = '/dashboard';
-        } else {
-          window.location.reload();
-        }
-      } else {
-        setError(data.message || 'Authentication failed');
-      }
-    } catch (err) {
-      setError('Connection failed. Is the server running?');
-    }
-  };
 
   if (!isOpen) return null;
 

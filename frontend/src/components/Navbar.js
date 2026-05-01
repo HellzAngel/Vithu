@@ -1,13 +1,12 @@
 // Vithu Marketplace - Premium Navbar
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiShoppingBag, FiUser, FiMenu, FiX, FiPackage, FiLogOut } from 'react-icons/fi';
+import { FiShoppingBag, FiUser, FiMenu, FiPackage, FiLogOut } from 'react-icons/fi';
 import Logo from './Logo';
 
 const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = React.useState(false);
-  const location = useLocation();
   const userRole = localStorage.getItem('vithu_role') || null; 
 
   const handleLogout = () => {

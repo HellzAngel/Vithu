@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { FiShoppingBag, FiX, FiUser, FiCheckCircle } from 'react-icons/fi';
+import { FiShoppingBag,  , FiUser, FiCheckCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import ThreeBackground from './components/ThreeBackground';
