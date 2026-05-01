@@ -159,6 +159,12 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
                           <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600" />
                           <input name="name" value={formData.name} onChange={handleInputChange} required className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Full Name" />
                         </div>
+                        <div className="relative col-span-2 md:col-span-1">
+                          <input name="address" value={formData.address} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Address" />
+                        </div>
+                        <div className="relative col-span-2 md:col-span-1">
+                          <input name="city" value={formData.city} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="City / District" />
+                        </div>
                         {role === 'farmer' && (
                           <>
                             <div className="relative col-span-2 md:col-span-1">
@@ -166,12 +172,6 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
                             </div>
                             <div className="relative col-span-2 md:col-span-1">
                               <input name="farmName" value={formData.farmName} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Farm / Store Name" />
-                            </div>
-                            <div className="relative col-span-2 md:col-span-1">
-                              <input name="address" value={formData.address} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Address" />
-                            </div>
-                            <div className="relative col-span-2 md:col-span-1">
-                              <input name="city" value={formData.city} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="City / District" />
                             </div>
                           </>
                         )}

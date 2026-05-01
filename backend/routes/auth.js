@@ -35,12 +35,12 @@ router.post('/register', async (req, res) => {
       phone, 
       otp, 
       otpExpires,
-      isVerified: role === 'customer' // Customers verified by default for now, or use OTP for all
+      location: { address, city },
+      isVerified: role === 'customer'
     };
     
     if (role === 'farmer') {
       userData.farmName = farmName;
-      userData.location = { address, city };
     }
 
     const user = await User.create(userData);
