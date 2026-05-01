@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPackage, FiTruck, FiCheckCircle, FiClock, FiMapPin, FiShoppingBag,   } from "react-icons/fi";
+import { FiPackage, FiTruck, FiCheckCircle, FiClock, FiMapPin, FiShoppingBag, FiX } from "react-icons/fi";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
