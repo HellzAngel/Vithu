@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiTruck, FiShield, FiHeart } from 'react-icons/fi';
+import FarmerMap from '../components/FarmerMap';
 
 const Home = () => {
   return (
@@ -59,6 +60,13 @@ const Home = () => {
           <h3 className="text-xl font-bold mb-3 text-gray-900">Support Local</h3>
           <p className="text-gray-600">Every purchase helps a local family. Build a stronger, healthier community together.</p>
         </div>
+      {/* Map Section */}
+      <div className="w-full max-w-6xl px-4 mt-24 mb-24">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">നിങ്ങൾക്കടുത്തുള്ള കർഷകർ</h2>
+          <p className="text-gray-500 font-bold italic">Find local farmers near you in Kerala</p>
+        </div>
+        <FarmerMap />
       </div>
     </div>
   );

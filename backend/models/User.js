@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
   location: {
     address: { type: String },
     city: { type: String },
+    pincode: { type: String },
+    coordinates: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
   },
   isVerified: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false }, // Admin approval for farmers

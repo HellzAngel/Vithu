@@ -9,14 +9,14 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   const [isOtpStep, setIsOtpStep] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', otp: ''
+    name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', pincode: '', otp: ''
   });
 
   React.useEffect(() => {
     if (isOpen) {
       setRole(initialRole);
       setIsOtpStep(false);
-      setFormData({ name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', otp: '' });
+      setFormData({ name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', pincode: '', otp: '' });
     }
   }, [isOpen, initialRole]);
 
@@ -27,6 +27,23 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Get geolocation if possible
+    let lat = null, lng = null;
+    if (navigator.geolocation) {
+      await new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
+            resolve();
+          },
+          () => resolve(),
+          { timeout: 5000 }
+        );
+      });
+    }
+
     try {
       if (isLogin) {
         const res = await fetch('https://vithu.onrender.com/api/auth/login', {
@@ -164,6 +181,9 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
                         </div>
                         <div className="relative col-span-2 md:col-span-1">
                           <input name="city" value={formData.city} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="City / District" />
+                        </div>
+                        <div className="relative col-span-2 md:col-span-1">
+                          <input name="pincode" value={formData.pincode} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Pincode" maxLength="6" />
                         </div>
                         {role === 'farmer' && (
                           <>

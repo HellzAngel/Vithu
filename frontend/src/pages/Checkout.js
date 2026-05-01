@@ -69,6 +69,10 @@ const Checkout = () => {
               <div className="space-y-4">
                 <input placeholder="Full Name" className="w-full bg-gray-50/50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" />
                 <input placeholder="Phone Number" className="w-full bg-gray-50/50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" />
+                <div className="grid grid-cols-2 gap-4">
+                  <input placeholder="City" className="w-full bg-gray-50/50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" />
+                  <input placeholder="Pincode" maxLength="6" className="w-full bg-gray-50/50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" />
+                </div>
                 <textarea placeholder="Complete Address" rows="3" className="w-full bg-gray-50/50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" />
               </div>
               <button 

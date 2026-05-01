@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPackage, FiTruck, FiCheckCircle, FiClock, FiMapPin, FiShoppingBag, FiX } from "react-icons/fi";
+import OrderMap from '../components/OrderMap';
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -65,52 +66,13 @@ const MyOrders = () => {
                <h3 className="text-3xl font-black text-gray-900 mb-2">ലൈവ് ട്രാക്കിംഗ്</h3>
                <p className="text-gray-400 font-bold mb-8 uppercase tracking-widest text-xs">Tracking Order #VITHU-{trackingOrder._id.slice(-4)}</p>
 
-               {/* Custom Interactive Map Visual */}
+               {/* Real Interactive Map */}
                <div className="relative h-64 bg-emerald-50 rounded-[40px] mb-8 overflow-hidden border border-emerald-100">
-                  {/* Map Pattern Background */}
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#059669 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                  
-                  {/* Journey Path */}
-                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200">
-                    <motion.path 
-                      d="M 50 150 Q 200 50 350 150" 
-                      fill="none" 
-                      stroke="#10b981" 
-                      strokeWidth="4" 
-                      strokeDasharray="10,10"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 2, ease: "easeInOut" }}
-                    />
-                    
-                    {/* Farm Marker */}
-                    <g transform="translate(50, 150)">
-                       <circle r="8" fill="#10b981" />
-                       <text y="-20" textAnchor="middle" className="text-[10px] font-black fill-emerald-800 uppercase">Farm</text>
-                    </g>
-
-                    {/* Home Marker */}
-                    <g transform="translate(350, 150)">
-                       <circle r="8" fill="#065f46" />
-                       <text y="-20" textAnchor="middle" className="text-[10px] font-black fill-emerald-800 uppercase">Home</text>
-                    </g>
-
-                    {/* Moving Delivery Truck */}
-                    <motion.g
-                      animate={{ 
-                        offsetDistance: trackingOrder.status === 'delivered' ? '100%' : '65%',
-                      }}
-                      transition={{ duration: 3, ease: "easeOut" }}
-                      style={{ offsetPath: "path('M 50 150 Q 200 50 350 150')" }}
-                    >
-                       <circle r="12" fill="white" className="shadow-lg" />
-                       <text textAnchor="middle" dominantBaseline="middle" className="text-xs">🚚</text>
-                    </motion.g>
-                  </svg>
-
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-6 py-2 rounded-2xl shadow-xl border border-white">
+                  <OrderMap status={trackingOrder.status} />
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-6 py-2 rounded-2xl shadow-xl border border-white z-[1001]">
                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest whitespace-nowrap">Status: {trackingOrder.status}</p>
                   </div>
+               </div>
                </div>
 
                <div className="space-y-4">

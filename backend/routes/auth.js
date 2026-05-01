@@ -16,7 +16,7 @@ const generateToken = (id) => {
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role, phone, farmName, address, city } = req.body;
+    const { name, email, password, role, phone, farmName, address, city, pincode, lat, lng } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -35,7 +35,12 @@ router.post('/register', async (req, res) => {
       phone, 
       otp, 
       otpExpires,
-      location: { address, city },
+      location: { 
+        address, 
+        city, 
+        pincode,
+        coordinates: { lat, lng }
+      },
       isVerified: role === 'customer'
     };
     
@@ -147,6 +152,19 @@ router.post('/login', async (req, res) => {
 // @access  Private
 router.get('/me', protect, async (req, res) => {
   res.json({ success: true, user: req.user });
+});
+
+// @route   GET /api/auth/farmers
+// @desc    Get all verified/approved farmers for map
+// @access  Public
+router.get('/farmers', async (req, res) => {
+  try {
+    const farmers = await User.find({ role: 'farmer', isApproved: true })
+      .select('name farmName location.coordinates location.city');
+    res.json({ success: true, farmers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 module.exports = router;
