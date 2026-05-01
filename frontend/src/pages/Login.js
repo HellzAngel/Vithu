@@ -11,7 +11,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute top-0 -left-4 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
       <div className="absolute top-0 -right-4 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -20,7 +20,7 @@ const Login = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-sm w-full space-y-4 bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white/20 z-10"
+        className="max-w-sm w-full space-y-2 bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white/20 z-10"
       >
 
 
@@ -54,7 +54,7 @@ const Login = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <div>
-              <h2 className="mt-6 text-center text-2xl font-black text-gray-900 tracking-tight">
+              <h2 className="mt-2 text-center text-2xl font-black text-gray-900 tracking-tight">
                 {isLogin ? 'Welcome back to വിത്ത്' : 'Join the വിത്ത് Community'}
               </h2>
               <p className="mt-2 text-center text-sm font-medium text-gray-500">
@@ -62,7 +62,7 @@ const Login = () => {
               </p>
             </div>
 
-            <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="mt-4 space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div className="space-y-4">
                 {!isLogin && (
                   <motion.div 

@@ -49,13 +49,13 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* Right Side: Form */}
-          <div className="flex-1 p-8 md:p-10">
+          <div className="flex-1 p-4 md:p-6">
 
 
             {/* Main Form Section */}
-            <div className="flex-1 p-6 sm:p-8">
-              <div className="mb-10">
-                <div className="lg:hidden flex justify-center mb-6">
+            <div className="flex-1 p-2 sm:p-4">
+              <div className="mb-4">
+                <div className="lg:hidden flex justify-center mb-2">
                   <Logo />
                 </div>
                 <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-2">
@@ -117,12 +117,12 @@ const AuthModal = ({ isOpen, onClose }) => {
                           window.location.reload();
                         }
                       }}
-                      className="w-full py-3 mt-4 bg-emerald-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95"
+                      className="w-full py-3 mt-2 bg-emerald-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95"
                     >
                       {isLogin ? 'Sign In' : 'Join Now'} <FiArrowRight />
                     </button>
 
-                    <div className="text-center mt-6">
+                    <div className="text-center mt-4">
                       <button
                         type="button"
                         onClick={() => setIsLogin(!isLogin)}
