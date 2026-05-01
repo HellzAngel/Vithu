@@ -14,7 +14,7 @@ import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
 import Profile from './pages/Profile';
 import AuthModal from './components/AuthModal';
-import Logo from './components/Logo';
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -97,11 +97,7 @@ function App() {
     setCart(cart.filter((_, i) => i !== index));
   };
 
-  const showNotification = (msg) => {
-    setNotification(msg);
-    // Auto-close success modal after 3s
-    setTimeout(() => setNotification(null), 3000);
-  };
+
 
   return (
     <Router>
@@ -324,7 +320,7 @@ function App() {
                  ) : (
                    cart.map((item, i) => (
                      <div key={i} className="flex gap-4 items-center bg-gray-50/50 p-5 rounded-[30px] border border-emerald-50 hover:border-emerald-200 transition-all group">
-                        <img src={item.image?.startsWith("http") ? item.image : "https://vithu.onrender.com" + item.image} className="w-20 h-20 rounded-2xl object-cover shadow-sm border-2 border-white" />
+                        <img src={item.image?.startsWith("http") ? item.image : "https://vithu.onrender.com" + item.image} alt={item.name} className="w-20 h-20 rounded-2xl object-cover shadow-sm border-2 border-white" />
                         <div className="flex-1">
                           <p className="font-black text-gray-800 text-sm mb-1">{item.name}</p>
                           <p className="text-xs text-emerald-600 font-black mb-3">₹{item.price}/{item.unit}</p>
