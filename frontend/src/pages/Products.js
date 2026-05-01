@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiFilter, FiShoppingCart, FiStar, FiMapPin, FiX, FiShoppingBag } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiMapPin, FiShoppingBag } from 'react-icons/fi';
 
 // Updated Mock Data for Vithu
 const MOCK_PRODUCTS = [
@@ -16,12 +15,6 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('vithu_cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -40,15 +33,6 @@ const Products = () => {
     };
     fetchProducts();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('vithu_cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const showNotification = (msg) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3000);
-  };
 
   const handleAddToCart = (product, quantity) => {
     const userRole = localStorage.getItem('vithu_role');
