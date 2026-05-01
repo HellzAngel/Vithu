@@ -22,6 +22,9 @@ const sendEmail = async (options) => {
     },
     connectionTimeout: 15000, // 15 seconds
     family: 4, // Force IPv4
+    tls: {
+      rejectUnauthorized: false // Helps with some cloud hosting certificate issues
+    }
   });
 
   const message = {
