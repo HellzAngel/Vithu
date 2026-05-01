@@ -13,7 +13,7 @@ const Home = () => {
         <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
         <div className="absolute bottom-[-50px] left-20 w-32 h-32 bg-green-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         
-        <h1 className="text-6xl md:text-7xl font-black text-gray-900 mb-6 relative z-10 leading-[1.1] tracking-tight">
+        <h1 className="text-4xl md:text-7xl font-black text-gray-900 mb-6 relative z-10 leading-[1.3] md:leading-[1.1] tracking-tight">
           വിത്ത്: <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-green-500 to-lime-400">മണ്ണിൽ നിന്ന് നേരിട്ട്,</span> <br/>
           നിങ്ങളുടെ വീട്ടിലേക്ക്.
         </h1>
