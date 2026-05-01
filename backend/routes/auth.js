@@ -53,7 +53,7 @@ router.post('/register', async (req, res) => {
         message: `Your verification code is: ${otp}. It expires in 10 minutes.`,
       });
     } catch (err) {
-      console.error("Email error:", err);
+      console.error("Email sending failed:", err);
     }
 
     res.status(201).json({
@@ -63,7 +63,8 @@ router.post('/register', async (req, res) => {
       role: user.role
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Registration error details:", error);
+    res.status(400).json({ success: false, message: error.message });
   }
 });
 
