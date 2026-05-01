@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  phone: { type: String },
   role: { 
     type: String, 
     enum: ['customer', 'farmer', 'admin'], 
@@ -15,12 +16,11 @@ const userSchema = new mongoose.Schema({
   location: {
     address: { type: String },
     city: { type: String },
-    coordinates: {
-      lat: { type: Number },
-      lng: { type: Number }
-    }
   },
+  isVerified: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false }, // Admin approval for farmers
+  otp: { type: String },
+  otpExpires: { type: Date },
   rating: { type: Number, default: 0 },
   numReviews: { type: Number, default: 0 }
 }, { timestamps: true });

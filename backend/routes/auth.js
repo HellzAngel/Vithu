@@ -5,35 +5,93 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+const sendEmail = require('../utils/sendEmail');
+
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' });
 };
 
 // @route   POST /api/auth/register
-// @desc    Register a new user
+// @desc    Register a new user (with OTP for farmers)
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role, farmName, address, city } = req.body;
+    const { name, email, password, role, phone, farmName, address, city } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'User already exists' });
     }
 
-    const userData = { name, email, password, role };
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+
+    const userData = { 
+      name, 
+      email, 
+      password, 
+      role, 
+      phone, 
+      otp, 
+      otpExpires,
+      isVerified: role === 'customer' // Customers verified by default for now, or use OTP for all
+    };
     
-    // Add farmer specifics
     if (role === 'farmer') {
       userData.farmName = farmName;
       userData.location = { address, city };
-      // By default isApproved is false for farmers
     }
 
     const user = await User.create(userData);
 
+    // Send OTP email
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'വിത്ത്: Verify your account',
+        message: `Your verification code is: ${otp}. It expires in 10 minutes.`,
+      });
+    } catch (err) {
+      console.error("Email error:", err);
+    }
+
     res.status(201).json({
       success: true,
+      message: 'Registration successful. Please verify your OTP.',
+      userId: user._id,
+      role: user.role
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/verify-otp
+// @desc    Verify OTP
+// @access  Public
+router.post('/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ 
+      email,
+      otp,
+      otpExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Account verified successfully!',
       user: {
         _id: user._id,
         name: user.name,
