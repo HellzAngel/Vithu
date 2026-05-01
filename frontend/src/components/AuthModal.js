@@ -22,7 +22,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-xl bg-white rounded-[50px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/20"
+          className="relative w-full max-w-lg bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/20"
         >
           {/* Left Side: Role Selector & Visual */}
           <div className="w-full md:w-56 bg-emerald-600 p-8 text-white flex flex-col justify-between">
@@ -49,7 +49,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* Right Side: Form */}
-          <div className="flex-1 p-10 md:p-14">
+          <div className="flex-1 p-8 md:p-10">
             <div className="flex justify-between items-center mb-10">
                <div>
                  <h3 className="text-3xl font-black text-gray-900 mb-1">{isLogin ? 'Login' : 'Sign Up'}</h3>
