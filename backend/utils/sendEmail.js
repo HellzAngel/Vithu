@@ -1,6 +1,7 @@
 const sendEmail = async (options) => {
   // Use console logging if no API Key is provided
-  if (!process.env.EMAIL_PASS || !process.env.EMAIL_PASS.startsWith('xkeysib-')) {
+  const apiKey = process.env.EMAIL_PASS;
+  if (!apiKey || (!apiKey.startsWith('xkeysib-') && !apiKey.startsWith('xsmtpsib-'))) {
     console.log("-----------------------------------------");
     console.log(`[TEST MODE] To: ${options.email}`);
     console.log(`Subject: ${options.subject}`);
