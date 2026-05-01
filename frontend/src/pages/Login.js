@@ -20,16 +20,9 @@ const Login = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-sm w-full space-y-6 bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/20 z-10"
+        className="max-w-sm w-full space-y-4 bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white/20 z-10"
       >
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {isLogin ? 'Welcome back to വിത്ത്' : 'Join the വിത്ത് Community'}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Connecting farmers directly to your doorstep
-          </p>
-        </div>
+
 
         {/* Role Toggle */}
         <div className="flex p-1 bg-gray-100 rounded-xl relative">
@@ -61,7 +54,7 @@ const Login = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <div>
-              <h2 className="mt-6 text-center text-3xl font-black text-gray-900 tracking-tight">
+              <h2 className="mt-6 text-center text-2xl font-black text-gray-900 tracking-tight">
                 {isLogin ? 'Welcome back to വിത്ത്' : 'Join the വിത്ത് Community'}
               </h2>
               <p className="mt-2 text-center text-sm font-medium text-gray-500">
@@ -81,7 +74,7 @@ const Login = () => {
                     <input
                       type="text"
                       required
-                      className="appearance-none relative block w-full px-12 py-4 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
+                      className="appearance-none relative block w-full px-12 py-3 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
                       placeholder="Full Name"
                     />
                   </motion.div>
@@ -91,7 +84,7 @@ const Login = () => {
                   <input
                     type="email"
                     required
-                    className="appearance-none relative block w-full px-12 py-4 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
+                    className="appearance-none relative block w-full px-12 py-3 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
                     placeholder="Email address"
                   />
                 </div>
@@ -100,7 +93,7 @@ const Login = () => {
                   <input
                     type="password"
                     required
-                    className="appearance-none relative block w-full px-12 py-4 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
+                    className="appearance-none relative block w-full px-12 py-3 border-2 border-emerald-50 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:border-emerald-500 sm:text-sm bg-white/50 transition-all"
                     placeholder="Password"
                   />
                 </div>
@@ -113,7 +106,7 @@ const Login = () => {
                     localStorage.setItem('vithu_role', role);
                     window.location.href = role === 'farmer' ? '/dashboard' : '/products';
                   }}
-                  className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:scale-[1.02] shadow-lg shadow-emerald-200"
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:scale-[1.02] shadow-lg shadow-emerald-200"
                 >
                   <span className="absolute left-0 inset-y-0 flex items-center pl-4">
                     <FiArrowRight className="h-5 w-5 text-emerald-400 group-hover:translate-x-1 transition-transform" aria-hidden="true" />

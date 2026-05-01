@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUser, FiBriefcase, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
+import { FiUser, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
 import Logo from './Logo';
 
 const AuthModal = ({ isOpen, onClose }) => {
@@ -50,20 +50,15 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           {/* Right Side: Form */}
           <div className="flex-1 p-8 md:p-10">
-            <div className="flex justify-between items-center mb-10">
-               <div>
-                 <h3 className="text-3xl font-black text-gray-900 mb-1">{isLogin ? 'Login' : 'Sign Up'}</h3>
-                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Persona: {role}</p>
-               </div>
-            </div>
+
 
             {/* Main Form Section */}
-            <div className="flex-1 p-8 sm:p-12">
+            <div className="flex-1 p-6 sm:p-8">
               <div className="mb-10">
                 <div className="lg:hidden flex justify-center mb-6">
                   <Logo />
                 </div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-2">
                   {isLogin ? 'Welcome Back' : 'Create Account'}
                 </h2>
                 <p className="text-sm font-medium text-gray-400">
@@ -71,26 +66,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 </p>
               </div>
 
-              {/* Role Toggle */}
-              <div className="flex p-1.5 bg-gray-50 rounded-2xl relative mb-8 border border-gray-100">
-                <motion.div 
-                  className="absolute h-[calc(100%-12px)] w-[calc(50%-6px)] bg-white rounded-xl shadow-md z-0"
-                  animate={{ x: role === 'customer' ? 0 : '100%' }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-                <button 
-                  onClick={() => setRole('customer')}
-                  className={`relative z-10 w-1/2 py-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest ${role === 'customer' ? 'text-emerald-600' : 'text-gray-400'}`}
-                >
-                  <FiUser /> Customer
-                </button>
-                <button 
-                  onClick={() => setRole('farmer')}
-                  className={`relative z-10 w-1/2 py-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest ${role === 'farmer' ? 'text-emerald-600' : 'text-gray-400'}`}
-                >
-                  <FiBriefcase /> Farmer
-                </button>
-              </div>
+
 
               <AnimatePresence mode="wait">
                 <motion.div
@@ -107,7 +83,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                         <input
                           type="text"
                           required
-                          className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
+                          className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
                           placeholder="Full Name"
                         />
                       </div>
@@ -117,7 +93,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         type="email"
                         required
-                        className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
+                        className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
                         placeholder="Email address"
                       />
                     </div>
@@ -126,7 +102,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         type="password"
                         required
-                        className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
+                        className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm transition-all"
                         placeholder="Password"
                       />
                     </div>
@@ -141,7 +117,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                           window.location.reload();
                         }
                       }}
-                      className="w-full py-4 mt-4 bg-emerald-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95"
+                      className="w-full py-3 mt-4 bg-emerald-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95"
                     >
                       {isLogin ? 'Sign In' : 'Join Now'} <FiArrowRight />
                     </button>
