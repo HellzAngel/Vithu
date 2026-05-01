@@ -113,6 +113,16 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      // Check if user is verified
+      if (!user.isVerified) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Please verify your email address before logging in.',
+          needsVerification: true,
+          email: user.email
+        });
+      }
+
       res.json({
         success: true,
         user: {
