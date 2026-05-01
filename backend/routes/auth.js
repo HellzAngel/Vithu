@@ -45,16 +45,12 @@ router.post('/register', async (req, res) => {
 
     const user = await User.create(userData);
 
-    // Send OTP email
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: 'വിത്ത്: Verify your account',
-        message: `Your verification code is: ${otp}. It expires in 10 minutes.`,
-      });
-    } catch (err) {
-      console.error("Email sending failed:", err);
-    }
+    // Send OTP email (don't await so it doesn't block the UI)
+    sendEmail({
+      email: user.email,
+      subject: 'വിത്ത്: Verify your account',
+      message: `Your verification code is: ${otp}. It expires in 10 minutes.`,
+    }).catch(err => console.error("Email sending failed:", err));
 
     res.status(201).json({
       success: true,
