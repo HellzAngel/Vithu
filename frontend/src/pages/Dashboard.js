@@ -84,18 +84,44 @@ const Dashboard = () => {
     }
   };
 
+  const [uploading, setUploading] = useState(false);
+
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const token = localStorage.getItem('vithu_token');
     
+    setUploading(true);
+    let imagePath = selectedProduct?.image || selectedProduct?.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&q=80';
+
+    // Handle Image Upload
+    const imageFile = formData.get('imageFile');
+    if (imageFile && imageFile.name) {
+      const imgFormData = new FormData();
+      imgFormData.append('images', imageFile);
+      try {
+        const uploadRes = await fetch('https://vithu.onrender.com/api/upload', {
+          method: 'POST',
+          body: imgFormData,
+          // Multer handles multipart, don't set Content-Type
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadData.success) {
+          imagePath = uploadData.paths[0];
+        }
+      } catch (err) {
+        console.error("Upload error:", err);
+      }
+    }
+
     const productData = {
       name: formData.get('name'),
-      price: formData.get('price'),
+      description: formData.get('description'),
+      price: Number(formData.get('price')),
       unit: formData.get('unit'),
-      stock: formData.get('stock'),
+      quantityAvailable: Number(formData.get('stock')),
       category: formData.get('category'),
-      image: selectedProduct?.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&q=80'
+      images: [imagePath]
     };
 
     try {
@@ -123,9 +149,13 @@ const Dashboard = () => {
           showNotification(`${productData.name} updated successfully!`);
         }
         setIsModalOpen(false);
+      } else {
+        showNotification(data.message || "Error saving product");
       }
     } catch (err) {
       showNotification("Error saving product");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -199,8 +229,20 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </div>
-                    <button type="submit" className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black mt-4 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95">
-                      {modalType === 'add' ? 'Launch Product' : 'Save Changes'}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-1">Description</label>
+                      <textarea name="description" defaultValue={selectedProduct?.description} required rows="2" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-3 font-bold outline-none focus:border-emerald-500 transition-all resize-none"/>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-1">Product Image</label>
+                      <input type="file" name="imageFile" accept="image/*" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-2 font-bold outline-none focus:border-emerald-500 transition-all text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer"/>
+                    </div>
+                    <button 
+                      type="submit" 
+                      disabled={uploading}
+                      className="w-full py-4 bg-emerald-600 text-white rounded-3xl font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all disabled:opacity-50 mt-4"
+                    >
+                      {uploading ? 'Processing...' : (modalType === 'add' ? 'Launch Product' : 'Save Changes')}
                     </button>
                   </form>
                 </div>

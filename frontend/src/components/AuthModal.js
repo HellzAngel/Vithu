@@ -22,17 +22,17 @@ const AuthModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-lg bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/20"
+          className="relative w-full max-w-lg bg-white rounded-3xl md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/20"
         >
           {/* Left Side: Role Selector & Visual */}
-          <div className="w-full md:w-56 bg-emerald-600 p-8 text-white flex flex-col justify-between">
+          <div className="w-full md:w-56 bg-emerald-600 p-4 md:p-8 text-white flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 bg-white/20 rounded-2xl mb-6 flex items-center justify-center text-2xl">🌱</div>
-              <h2 className="text-2xl font-black mb-2 tracking-tight">Welcome to വിത്ത്</h2>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-xl mb-4 md:mb-6 flex items-center justify-center text-xl md:text-2xl">🌱</div>
+              <h2 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight">Welcome to വിത്ത്</h2>
               <p className="text-xs opacity-70 font-medium leading-relaxed">Choose your persona to start your journey.</p>
             </div>
             
-            <div className="space-y-3 mt-8">
+            <div className="space-y-2 mt-4 md:mt-8">
               <button 
                 onClick={() => setRole('customer')}
                 className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${role === 'customer' ? 'bg-white text-emerald-600 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}
@@ -41,7 +41,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               </button>
               <button 
                 onClick={() => setRole('farmer')}
-                className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${role === 'farmer' ? 'bg-white text-emerald-600 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}
+                className={`w-full py-3 md:py-4 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all ${role === 'farmer' ? 'bg-white text-emerald-600 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}
               >
                 Farmer
               </button>
