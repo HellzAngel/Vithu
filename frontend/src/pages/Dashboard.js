@@ -15,13 +15,13 @@ const Dashboard = () => {
     const fetchData = async () => {
       const token = localStorage.getItem('vithu_token');
       try {
-        const pRes = await fetch('http://localhost:5000/api/products', {
+        const pRes = await fetch('https://vithu.onrender.com/api/products', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const pData = await pRes.json();
         if (pData.success) setProducts(pData.products);
 
-        const oRes = await fetch('http://localhost:5000/api/orders', {
+        const oRes = await fetch('https://vithu.onrender.com/api/orders', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const oData = await oRes.json();
@@ -40,7 +40,7 @@ const Dashboard = () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+      const res = await fetch(`https://vithu.onrender.com/api/orders/${orderId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const Dashboard = () => {
   const handleDeleteProduct = async () => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${selectedProduct.id || selectedProduct._id}`, {
+      const res = await fetch(`https://vithu.onrender.com/api/products/${selectedProduct.id || selectedProduct._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -101,8 +101,8 @@ const Dashboard = () => {
     try {
       const method = modalType === 'add' ? 'POST' : 'PUT';
       const url = modalType === 'add' 
-        ? 'http://localhost:5000/api/products' 
-        : `http://localhost:5000/api/products/${selectedProduct.id || selectedProduct._id}`;
+        ? 'https://vithu.onrender.com/api/products' 
+        : `https://vithu.onrender.com/api/products/${selectedProduct.id || selectedProduct._id}`;
 
       const res = await fetch(url, {
         method,
