@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
-import { motion } from 'framer-motion';
 
 const farmIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/3062/3062327.png',
@@ -33,8 +32,10 @@ function RecenterMap({ bounds }) {
 
 const OrderMap = ({ status }) => {
   // Demo coordinates (Kerala region)
-  const farmPos = [10.8505, 76.2711];
-  const userPos = [10.8750, 76.2950];
+  // Use useMemo or define outside component to avoid dependency issues if needed, 
+  // but for demo we will just include them in the array.
+  const farmPos = React.useMemo(() => [10.8505, 76.2711], []);
+  const userPos = React.useMemo(() => [10.8750, 76.2950], []);
   const [deliveryPos, setDeliveryPos] = useState(farmPos);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const OrderMap = ({ status }) => {
     const lat = farmPos[0] + (userPos[0] - farmPos[0]) * progress;
     const lng = farmPos[1] + (userPos[1] - farmPos[1]) * progress;
     setDeliveryPos([lat, lng]);
-  }, [status]);
+  }, [status, farmPos, userPos]);
 
   const bounds = [farmPos, userPos];
 

@@ -64,7 +64,7 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
         const res = await fetch('https://vithu.onrender.com/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, role })
+          body: JSON.stringify({ ...formData, role, lat, lng })
         });
         const data = await res.json();
         if (data.success) {
