@@ -15,9 +15,20 @@ connectDB();
 const app = express();
 
 // ── Middleware ──────────────────────────────────────────────
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000'].filter(Boolean);
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  'https://vithu-eosin.vercel.app',
+  'http://localhost:3000'
+].filter(Boolean);
+
 app.use(cors({ 
-  origin: process.env.NODE_ENV === 'production' ? true : allowedOrigins, 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true 
 }));
 app.use(express.json());
