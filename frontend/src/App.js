@@ -371,8 +371,8 @@ function App() {
                       <div key={i} className="flex gap-4 items-center bg-gray-50/50 p-5 rounded-[30px] border border-emerald-50 hover:border-emerald-200 transition-all group">
                          <img 
                             src={(item.images && item.images.length > 0) 
-                              ? (item.images[0].startsWith("http") ? item.images[0] : "https://vithu.onrender.com" + item.images[0])
-                              : (item.image && item.image.startsWith("http") ? item.image : "https://vithu.onrender.com" + (item.image || "/placeholder.png"))
+                              ? (item.images[0].startsWith("http") ? item.images[0] : `${baseUrl}/${item.images[0].startsWith('/') ? item.images[0].slice(1) : item.images[0]}`)
+                              : (item.image && item.image.startsWith("http") ? item.image : `${baseUrl}/${item.image?.startsWith('/') ? item.image.slice(1) : (item.image || 'placeholder.png')}`)
                             } 
                             alt={item.name} 
                             className="w-20 h-20 rounded-2xl object-cover shadow-sm border-2 border-white" 

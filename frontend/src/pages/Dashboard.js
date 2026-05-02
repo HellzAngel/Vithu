@@ -389,7 +389,7 @@ const Dashboard = () => {
                           <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border-2 border-white bg-gray-50 flex items-center justify-center">
                              {product.images && product.images.length > 0 ? (
                                <img 
-                                 src={product.images[0].startsWith("http") ? product.images[0] : baseUrl + product.images[0]} 
+                                 src={product.images[0].startsWith("http") ? product.images[0] : `${baseUrl}/${product.images[0].startsWith('/') ? product.images[0].slice(1) : product.images[0]}`} 
                                  alt={product.name} 
                                  className="w-full h-full object-cover"
                                />

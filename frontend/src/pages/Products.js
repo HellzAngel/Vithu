@@ -104,8 +104,8 @@ const Products = () => {
             <div className="h-64 overflow-hidden relative">
               <img 
                 src={product.images && product.images.length > 0 
-                  ? (product.images[0].startsWith("http") ? product.images[0] : baseUrl + product.images[0])
-                  : (product.image && product.image.startsWith("http") ? product.image : baseUrl + product.image)
+                  ? (product.images[0].startsWith("http") ? product.images[0] : `${baseUrl}/${product.images[0].startsWith('/') ? product.images[0].slice(1) : product.images[0]}`)
+                  : (product.image && product.image.startsWith("http") ? product.image : `${baseUrl}/${product.image?.startsWith('/') ? product.image.slice(1) : (product.image || 'placeholder.png')}`)
                 } 
                 alt={product.name} 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
