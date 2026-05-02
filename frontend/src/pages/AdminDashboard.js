@@ -10,7 +10,7 @@ const AdminDashboard = () => {
     const user = userStr ? JSON.parse(userStr) : null;
     
     if (!user || user.role !== 'admin') {
-      window.location.href = '/';
+      window.location.href = '/admin-login';
       return;
     }
 

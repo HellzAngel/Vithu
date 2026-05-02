@@ -10,6 +10,7 @@ import Products from './pages/Products';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
 import Profile from './pages/Profile';
@@ -399,6 +400,7 @@ function App() {
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
             </Routes>
           </main>
           
