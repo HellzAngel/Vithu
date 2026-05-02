@@ -2,12 +2,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiShoppingBag, FiUser, FiMenu, FiPackage, FiLogOut } from 'react-icons/fi';
+import { FiShoppingBag, FiUser, FiMenu, FiPackage, FiLogOut, FiActivity } from 'react-icons/fi';
 import Logo from './Logo';
 
 const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = React.useState(false);
-  const userRole = localStorage.getItem('vithu_role') || null; 
+  const [userRole, setUserRole] = React.useState(localStorage.getItem('vithu_role') || null);
+
+  React.useEffect(() => {
+    const checkRole = () => {
+      setUserRole(localStorage.getItem('vithu_role'));
+    };
+    window.addEventListener('storage', checkRole);
+    // Also listen for local custom login events if any
+    return () => window.removeEventListener('storage', checkRole);
+  }, []);
 
   const handleLogout = () => {
     setIsProfileOpen(false);
@@ -15,7 +24,10 @@ const Navbar = () => {
       detail: {
         message: "Do you want to logout from വിത്ത്?",
         onConfirm: () => {
+          localStorage.removeItem('vithu_token');
+          localStorage.removeItem('vithu_user');
           localStorage.removeItem('vithu_role');
+          setUserRole(null);
           window.location.href = '/';
         }
       }
@@ -40,13 +52,19 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <button onClick={() => window.location.href = '/my-orders'} className="text-gray-700 hover:text-emerald-600 p-2 transition-all" title="Track Orders"><FiPackage size={22} /></button>
-                <button onClick={() => window.dispatchEvent(new Event('openCart'))} className="text-gray-700 hover:text-emerald-600 p-2 relative transition-all">
-                  <FiShoppingBag size={22} />
-                  <span className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-black">
-                    {JSON.parse(localStorage.getItem('vithu_cart') || '[]').length}
-                  </span>
-                </button>
+                {userRole === 'admin' ? (
+                   <Link to="/admin" className="text-sm font-black text-emerald-600 uppercase tracking-widest hover:underline">Command Center</Link>
+                ) : (
+                  <>
+                    <button onClick={() => window.location.href = '/my-orders'} className="text-gray-700 hover:text-emerald-600 p-2 transition-all" title="Track Orders"><FiPackage size={22} /></button>
+                    <button onClick={() => window.dispatchEvent(new Event('openCart'))} className="text-gray-700 hover:text-emerald-600 p-2 relative transition-all">
+                      <FiShoppingBag size={22} />
+                      <span className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-black">
+                        {JSON.parse(localStorage.getItem('vithu_cart') || '[]').length}
+                      </span>
+                    </button>
+                  </>
+                )}
                 <div className="relative">
                   <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="text-gray-700 hover:text-emerald-600 p-2 transition-all"><FiUser size={22} /></button>
                   <AnimatePresence>
@@ -54,7 +72,11 @@ const Navbar = () => {
                       <>
                         <div className="fixed inset-0 z-[-1]" onClick={() => setIsProfileOpen(false)} />
                         <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="absolute right-0 mt-4 w-56 bg-white rounded-[30px] shadow-2xl border border-emerald-50 p-3 overflow-hidden z-50">
-                           <button onClick={() => { window.location.href = '/profile'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiUser size={18} /> Edit Profile</button>
+                           {userRole === 'admin' ? (
+                             <button onClick={() => { window.location.href = '/admin'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiActivity size={18} /> Admin Panel</button>
+                           ) : (
+                             <button onClick={() => { window.location.href = '/profile'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiUser size={18} /> Edit Profile</button>
+                           )}
                            <div className="h-px bg-gray-50 my-1 mx-2" />
                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-red-400 hover:bg-red-50 hover:text-red-600 rounded-2xl transition-all"><FiLogOut size={18} /> Logout</button>
                         </motion.div>
