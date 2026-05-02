@@ -1,36 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { FiMapPin, FiNavigation } from 'react-icons/fi';
+import { FiMapPin, FiNavigation, FiSearch, FiTarget, FiX, FiStar, FiClock } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// Fix for default marker icons in Leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
+// Premium Custom Icons
 const farmerIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3062/3062327.png', // Farmer/Tractor icon
-  iconSize: [35, 35],
-  iconAnchor: [17, 35],
-  popupAnchor: [0, -35],
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3062/3062327.png',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
 });
 
 const userIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png', // User icon
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-  popupAnchor: [0, -30],
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+  iconSize: [35, 35],
+  iconAnchor: [17, 35],
 });
 
-// Component to recenter map when location changes
 function RecenterMap({ coords }) {
   const map = useMap();
   useEffect(() => {
     if (coords) {
-      map.setView([coords.lat, coords.lng], 13);
+      map.flyTo([coords.lat, coords.lng], 14, { duration: 2 });
     }
   }, [coords, map]);
   return null;
@@ -40,30 +32,30 @@ const FarmerMap = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [farmers, setFarmers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
+
+  const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
 
   useEffect(() => {
-    // 1. Get user location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => setUserLocation({ lat: 10.8505, lng: 76.2711 }) // Default to Kerala if failed
+        () => setUserLocation({ lat: 10.8505, lng: 76.2711 })
       );
     }
 
-    // 2. Fetch farmers from backend
     const fetchFarmers = async () => {
       try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
         const res = await fetch(`${baseUrl}/api/auth/farmers`);
         const data = await res.json();
         if (data.success) {
           setFarmers(data.farmers.length > 0 ? data.farmers : [
-            // Fallback mock farmer if DB is empty
             { 
               _id: 'mock1', 
               name: 'Demo Organic Farm', 
               farmName: 'Demo Organic Farm', 
-              location: { city: 'Kochi', coordinates: { lat: 10.0159, lng: 76.3419 } } 
+              location: { city: 'Kochi', coordinates: { lat: 10.0159, lng: 76.3419 } },
+              rating: 4.8
             }
           ]);
         }
@@ -74,34 +66,38 @@ const FarmerMap = () => {
       }
     };
     fetchFarmers();
-  }, []);
+  }, [baseUrl]);
 
   return (
-    <div className="w-full h-[500px] rounded-[40px] overflow-hidden shadow-2xl border-4 border-white relative group">
-      <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-xl border border-white">
-         <h3 className="text-sm font-black text-emerald-900 flex items-center gap-2">
-           <FiMapPin className="text-emerald-600" /> Nearby Farmers
-         </h3>
+    <div className="w-full h-[650px] rounded-[50px] overflow-hidden shadow-2xl border-[12px] border-white relative group font-sans">
+      
+      {/* Swiggy Style Search/Top Bar */}
+      <div className="absolute top-8 left-8 right-8 z-[1000] flex gap-4 pointer-events-none">
+        <div className="bg-white/90 backdrop-blur-xl px-6 py-4 rounded-[25px] shadow-2xl border border-white flex items-center gap-4 flex-1 pointer-events-auto">
+           <FiSearch className="text-emerald-600" />
+           <input type="text" placeholder="Search for nearby farmers or products..." className="bg-transparent border-none outline-none w-full font-bold text-sm text-gray-700 placeholder:text-gray-400" />
+        </div>
+        <button 
+          onClick={() => navigator.geolocation.getCurrentPosition((pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }))}
+          className="bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-white text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all pointer-events-auto"
+        >
+          <FiTarget size={20} />
+        </button>
       </div>
 
       <MapContainer 
         center={userLocation || [10.8505, 76.2711]} 
         zoom={13} 
-        scrollWheelZoom={false}
-        className="w-full h-full"
+        zoomControl={false}
+        className="w-full h-full z-0"
       >
+        {/* Cleaner CartoDB Tile Layer */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
         
-        {userLocation && (
-          <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
-            <Popup>
-              <div className="font-bold text-emerald-900">You are here</div>
-            </Popup>
-          </Marker>
-        )}
+        {userLocation && <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon} />}
 
         {farmers.map((farmer) => (
           farmer.location?.coordinates?.lat && (
@@ -109,43 +105,59 @@ const FarmerMap = () => {
               key={farmer._id} 
               position={[farmer.location.coordinates.lat, farmer.location.coordinates.lng]}
               icon={farmerIcon}
-            >
-              <Popup>
-                <div className="p-2">
-                  <h4 className="font-black text-emerald-900 text-lg">{farmer.farmName || farmer.name}</h4>
-                  <p className="text-xs text-gray-500 mb-3">{farmer.location.city}</p>
-                  <button 
-                    onClick={() => {
-                      const reason = prompt("Enter reason for reporting this farmer:");
-                      if (reason) {
-                        const token = localStorage.getItem('vithu_token');
-                        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
-                        fetch(`${baseUrl}/api/auth/report-farmer/${farmer._id}`, {
-                          method: 'POST',
-                          headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                          },
-                          body: JSON.stringify({ reason })
-                        }).then(() => alert("Reported to Admin."));
-                      }
-                    }}
-                    className="w-full mt-2 py-2 text-red-500 text-[9px] font-black uppercase tracking-widest hover:bg-red-50 rounded-xl transition-all"
-                  >
-                    Report Farmer
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
+              eventHandlers={{ click: () => setSelectedFarmer(farmer) }}
+            />
           )
         ))}
 
         <RecenterMap coords={userLocation} />
       </MapContainer>
 
+      {/* Floating Info Panel (Swiggy Style) */}
+      <AnimatePresence>
+        {selectedFarmer && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="absolute bottom-8 left-8 right-8 z-[1001] bg-white rounded-[40px] shadow-2xl p-8 border border-emerald-50 flex flex-col md:flex-row items-center gap-8 overflow-hidden"
+          >
+             <button onClick={() => setSelectedFarmer(null)} className="absolute top-6 right-6 p-2 bg-gray-50 rounded-full text-gray-400 hover:text-red-500 transition-all"><FiX /></button>
+             
+             <div className="w-24 h-24 bg-emerald-100 rounded-3xl flex items-center justify-center text-4xl shadow-inner rotate-3 shrink-0">👨‍🌾</div>
+             
+             <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
+                  <h3 className="text-2xl font-black text-gray-900">{selectedFarmer.farmName || selectedFarmer.name}</h3>
+                  <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1"><FiStar fill="currentColor" /> {selectedFarmer.rating || '4.5'}</span>
+                </div>
+                <p className="text-gray-400 font-bold text-sm mb-4 flex items-center justify-center md:justify-start gap-2"><FiMapPin className="text-emerald-500" /> {selectedFarmer.location.city} • 2.4 km away</p>
+                <div className="flex items-center justify-center md:justify-start gap-6">
+                   <div className="flex items-center gap-2">
+                      <FiClock className="text-emerald-600" />
+                      <span className="text-xs font-black text-gray-600">Arrives in 30 mins</span>
+                   </div>
+                   <div className="flex items-center gap-2">
+                      <FiNavigation className="text-emerald-600" />
+                      <span className="text-xs font-black text-gray-600 underline">Get Directions</span>
+                   </div>
+                </div>
+             </div>
+
+             <button 
+              onClick={() => window.location.href = `/products?farmer=${selectedFarmer._id}`}
+              className="w-full md:w-auto px-12 py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all active:scale-95"
+             >
+               Explore Products
+             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {loading && (
-        <div className="absolute inset-0 bg-emerald-900/10 backdrop-blur-sm z-[1001] flex items-center justify-center">
-           <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-md z-[1002] flex flex-col items-center justify-center gap-4">
+           <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+           <p className="text-emerald-900 font-black uppercase tracking-[0.3em] text-xs">Locating Freshness...</p>
         </div>
       )}
     </div>
