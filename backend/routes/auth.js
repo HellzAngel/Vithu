@@ -159,8 +159,11 @@ router.get('/me', protect, async (req, res) => {
 // @access  Public
 router.get('/farmers', async (req, res) => {
   try {
-    const farmers = await User.find({ role: 'farmer', isApproved: true })
-      .select('name farmName location.coordinates location.city');
+    const farmers = await User.find({ 
+      role: 'farmer', 
+      'location.coordinates.lat': { $exists: true, $ne: null } 
+    })
+      .select('name farmName location.coordinates location.city isApproved');
     res.json({ success: true, farmers });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

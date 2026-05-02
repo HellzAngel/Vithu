@@ -53,10 +53,19 @@ const FarmerMap = () => {
     // 2. Fetch farmers from backend
     const fetchFarmers = async () => {
       try {
-        const res = await fetch('https://vithu.onrender.com/api/auth/farmers');
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+        const res = await fetch(`${baseUrl}/api/auth/farmers`);
         const data = await res.json();
         if (data.success) {
-          setFarmers(data.farmers);
+          setFarmers(data.farmers.length > 0 ? data.farmers : [
+            // Fallback mock farmer if DB is empty
+            { 
+              _id: 'mock1', 
+              name: 'Demo Organic Farm', 
+              farmName: 'Demo Organic Farm', 
+              location: { city: 'Kochi', coordinates: { lat: 10.0159, lng: 76.3419 } } 
+            }
+          ]);
         }
       } catch (err) {
         console.error("Failed to fetch farmers:", err);
