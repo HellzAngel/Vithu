@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUser, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
-
+import { FiUser, FiLock, FiMail, FiArrowRight, FiSmartphone, FiMapPin, FiX, FiAlertCircle } from 'react-icons/fi';
 
 const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   const [role, setRole] = React.useState(initialRole);
   const [isLogin, setIsLogin] = useState(true);
   const [isOtpStep, setIsOtpStep] = useState(false);
+  const [isResetStep, setIsResetStep] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', pincode: '', otp: ''
   });
@@ -16,28 +17,27 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
     if (isOpen) {
       setRole(initialRole);
       setIsOtpStep(false);
+      setIsResetStep(false);
+      setError('');
       setFormData({ name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', pincode: '', otp: '' });
     }
   }, [isOpen, initialRole]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError('');
   };
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
-    // Get geolocation if possible
     let lat = null, lng = null;
-    if (navigator.geolocation) {
+    if (!isLogin && navigator.geolocation) {
       await new Promise((resolve) => {
         navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            lat = pos.coords.latitude;
-            lng = pos.coords.longitude;
-            resolve();
-          },
+          (pos) => { lat = pos.coords.latitude; lng = pos.coords.longitude; resolve(); },
           () => resolve(),
           { timeout: 5000 }
         );
@@ -45,8 +45,10 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
     }
 
     try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+      
       if (isLogin) {
-        const res = await fetch('https://vithu.onrender.com/api/auth/login', {
+        const res = await fetch(`${baseUrl}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: formData.email, password: formData.password })
@@ -58,11 +60,10 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
           localStorage.setItem('vithu_role', data.user.role);
           window.location.reload();
         } else {
-          alert(data.message);
+          setError(data.message);
         }
       } else {
-        // Register
-        const res = await fetch('https://vithu.onrender.com/api/auth/register', {
+        const res = await fetch(`${baseUrl}/api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...formData, role, lat, lng })
@@ -71,20 +72,23 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
         if (data.success) {
           setIsOtpStep(true);
         } else {
-          alert(data.message);
+          setError(data.message);
         }
       }
     } catch (err) {
-      alert("Something went wrong");
+      setError("Connection error. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      const res = await fetch('https://vithu.onrender.com/api/auth/verify-otp', {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+      const res = await fetch(`${baseUrl}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, otp: formData.otp })
@@ -96,136 +100,189 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
         localStorage.setItem('vithu_role', data.user.role);
         window.location.reload();
       } else {
-        alert(data.message);
+        setError(data.message);
       }
     } catch (err) {
-      alert("OTP verification failed");
+      setError("Verification failed.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setError("Please enter your email first.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+      const res = await fetch(`${baseUrl}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsResetStep(true);
+        setIsLogin(false);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Failed to send OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+      const res = await fetch(`${baseUrl}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, otp: formData.otp, newPassword: formData.password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Password reset successful! Please login.");
+        setIsResetStep(false);
+        setIsLogin(true);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Reset failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-emerald-950/60 backdrop-blur-md"
-        />
-        
-        <motion.div 
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-2xl bg-white rounded-3xl md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/20"
-        >
-          {/* Left Side: Role Selector & Visual */}
-          <div className="w-full md:w-56 bg-emerald-600 p-4 md:p-8 text-white flex flex-col justify-between">
-            <div>
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-xl mb-4 md:mb-6 flex items-center justify-center text-xl md:text-2xl">🌱</div>
-              <h2 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight">Welcome to വിത്ത്</h2>
-              <p className="text-xs opacity-70 font-medium leading-relaxed">Choose your persona to start your journey.</p>
-            </div>
-            
-            {!isOtpStep && (
-              <div className="space-y-2 mt-4 md:mt-8">
-                <button 
-                  onClick={() => setRole('customer')}
-                  className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${role === 'customer' ? 'bg-white text-emerald-600 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}
-                >
-                  Customer
-                </button>
-                <button 
-                  onClick={() => setRole('farmer')}
-                  className={`w-full py-3 md:py-4 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all ${role === 'farmer' ? 'bg-white text-emerald-600 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}
-                >
-                  Farmer
-                </button>
-              </div>
-            )}
-          </div>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-emerald-950/40 backdrop-blur-md"
+      />
+      
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        className="bg-white rounded-[50px] shadow-2xl p-10 w-full max-w-xl relative overflow-hidden border border-white"
+      >
+        <button onClick={onClose} className="absolute top-8 right-8 p-3 bg-gray-50 rounded-2xl text-gray-400 hover:text-red-500 transition-all z-10"><FiX /></button>
 
-          {/* Right Side: Form */}
-          <div className="flex-1 p-4 md:p-6 overflow-y-auto max-h-[90vh]">
-            <div className="flex-1 p-2 sm:p-4">
-              <div className="mb-4 text-center md:text-left">
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-1">
-                  {isOtpStep ? 'Verify OTP' : (isLogin ? 'Welcome Back' : 'Create Account')}
-                </h2>
-                <p className="text-xs font-medium text-gray-400">
-                  {isOtpStep ? `Enter the code sent to ${formData.email}` : (isLogin ? 'Sign in to your account' : 'Join the most trusted farm network')}
-                </p>
-              </div>
+        <div className="mb-10">
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight">
+            {isOtpStep ? 'അംഗീകാരം' : isResetStep ? 'പുതിയ പാസ്‌വേഡ്' : isLogin ? 'സ്വാഗതം' : 'രജിസ്റ്റർ'}
+          </h2>
+          <p className="text-gray-400 font-bold italic mt-2">
+            {isOtpStep ? 'Verification Code Sent' : isResetStep ? 'Reset your account password' : isLogin ? 'Welcome back to വിത്ത്' : `Join as a ${role}`}
+          </p>
+        </div>
 
-              <AnimatePresence mode="wait">
-                {isOtpStep ? (
-                  <motion.form key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} onSubmit={handleVerifyOtp} className="space-y-4">
-                    <div className="relative">
-                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600" />
-                      <input name="otp" value={formData.otp} onChange={handleInputChange} required className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm text-center tracking-[1em]" placeholder="000000" maxLength="6" />
-                    </div>
-                    <button type="submit" disabled={loading} className="w-full py-3 bg-emerald-600 text-white rounded-2xl font-black shadow-xl hover:bg-emerald-700 transition-all disabled:opacity-50">
-                      {loading ? 'Verifying...' : 'Verify & Finish'}
-                    </button>
-                  </motion.form>
-                ) : (
-                  <motion.form key="auth" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} onSubmit={handleAuth} className="space-y-3">
-                    {!isLogin && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="relative col-span-2">
-                          <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600" />
-                          <input name="name" value={formData.name} onChange={handleInputChange} required className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Full Name" />
-                        </div>
-                        <div className="relative col-span-2 md:col-span-1">
-                          <input name="address" value={formData.address} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Address" />
-                        </div>
-                        <div className="relative col-span-2 md:col-span-1">
-                          <input name="city" value={formData.city} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="City / District" />
-                        </div>
-                        <div className="relative col-span-2 md:col-span-1">
-                          <input name="pincode" value={formData.pincode} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Pincode" maxLength="6" />
-                        </div>
-                        {role === 'farmer' && (
-                          <>
-                            <div className="relative col-span-2 md:col-span-1">
-                              <input name="phone" value={formData.phone} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Phone Number" />
-                            </div>
-                            <div className="relative col-span-2 md:col-span-1">
-                              <input name="farmName" value={formData.farmName} onChange={handleInputChange} required className="w-full px-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Farm / Store Name" />
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                    
-                    <div className="relative">
-                      <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600" />
-                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} required className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Email address" />
-                    </div>
-                    <div className="relative">
-                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600" />
-                      <input name="password" type="password" value={formData.password} onChange={handleInputChange} required className="w-full pl-12 pr-6 py-3 rounded-2xl border-2 border-emerald-50 focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Password" />
-                    </div>
+        <AnimatePresence mode="wait">
+          {error && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-500 font-bold text-xs"
+            >
+              <FiAlertCircle className="shrink-0 text-lg" /> {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                    <button type="submit" disabled={loading} className="w-full py-3 mt-2 bg-emerald-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all transform active:scale-95 disabled:opacity-50">
-                      {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Send OTP')} <FiArrowRight />
-                    </button>
-
-                    <div className="text-center mt-4">
-                      <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:text-emerald-500">
-                        {isLogin ? "New to വിത്ത്? Create Account" : "Already a member? Sign In"}
-                      </button>
-                    </div>
-                  </motion.form>
+        {isOtpStep ? (
+          <form onSubmit={handleVerifyOtp} className="space-y-6">
+             <div className="space-y-2">
+                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Enter 6-digit OTP</label>
+                <input name="otp" required maxLength="6" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-black text-center text-2xl tracking-[1em] outline-none focus:border-emerald-500 transition-all" value={formData.otp} onChange={handleInputChange} />
+             </div>
+             <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all disabled:opacity-50 uppercase tracking-widest text-xs">Verify Account</button>
+          </form>
+        ) : isResetStep ? (
+          <form onSubmit={handleResetPassword} className="space-y-6">
+             <div className="space-y-2">
+                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Verification Code</label>
+                <input name="otp" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.otp} onChange={handleInputChange} />
+             </div>
+             <div className="space-y-2">
+                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">New Password</label>
+                <input type="password" name="password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.password} onChange={handleInputChange} />
+             </div>
+             <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all uppercase tracking-widest text-xs">Reset Password</button>
+          </form>
+        ) : (
+          <form onSubmit={handleAuth} className="space-y-4">
+            {!isLogin && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Full Name</label>
+                    <input name="name" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.name} onChange={handleInputChange} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Phone</label>
+                    <input name="phone" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.phone} onChange={handleInputChange} />
+                  </div>
+                </div>
+                {role === 'farmer' && (
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Farm Name</label>
+                    <input name="farmName" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.farmName} onChange={handleInputChange} />
+                  </div>
                 )}
-              </AnimatePresence>
+                <div className="grid grid-cols-3 gap-4">
+                   <div className="col-span-2 space-y-1">
+                      <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">City</label>
+                      <input name="city" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.city} onChange={handleInputChange} />
+                   </div>
+                   <div className="space-y-1">
+                      <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Pincode</label>
+                      <input name="pincode" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.pincode} onChange={handleInputChange} />
+                   </div>
+                </div>
+              </>
+            )}
+            
+            <div className="space-y-1">
+              <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Email Address</label>
+              <input type="email" name="email" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.email} onChange={handleInputChange} />
             </div>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+
+            <div className="space-y-1">
+              <div className="flex justify-between items-center pr-1">
+                <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Password</label>
+                {isLogin && <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black text-gray-400 hover:text-emerald-600 uppercase tracking-widest transition-all">Forgot?</button>}
+              </div>
+              <input type="password" name="password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.password} onChange={handleInputChange} />
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all disabled:opacity-50 mt-6 flex items-center justify-center gap-3">
+               {loading ? 'Processing...' : (
+                 <>{isLogin ? 'Login Now' : 'Create Account'} <FiArrowRight /></>
+               )}
+            </button>
+
+            <div className="text-center mt-8">
+               <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-emerald-600 transition-all">
+                  {isLogin ? "Don't have an account? Join" : "Already have an account? Login"}
+               </button>
+            </div>
+          </form>
+        )}
+      </motion.div>
+    </div>
   );
 };
 
