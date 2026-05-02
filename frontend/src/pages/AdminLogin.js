@@ -25,6 +25,7 @@ const AdminLogin = () => {
         if (data.user.role === 'admin') {
           localStorage.setItem('vithu_token', data.token);
           localStorage.setItem('vithu_user', JSON.stringify(data.user));
+          localStorage.setItem('vithu_role', data.user.role);
           window.location.href = '/admin';
         } else {
           setError('Access denied. Not an admin account.');

@@ -55,6 +55,7 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
         if (data.success) {
           localStorage.setItem('vithu_token', data.token);
           localStorage.setItem('vithu_user', JSON.stringify(data.user));
+          localStorage.setItem('vithu_role', data.user.role);
           window.location.reload();
         } else {
           alert(data.message);
@@ -92,6 +93,7 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
       if (data.success) {
         localStorage.setItem('vithu_token', data.token);
         localStorage.setItem('vithu_user', JSON.stringify(data.user));
+        localStorage.setItem('vithu_role', data.user.role);
         window.location.reload();
       } else {
         alert(data.message);
