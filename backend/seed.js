@@ -61,11 +61,14 @@ const seedFarmers = async () => {
     ];
 
     for (const farmerData of demoFarmers) {
-      const exists = await User.findOne({ email: farmerData.email });
-      if (!exists) {
-        await User.create(farmerData);
-        console.log(`Created farmer: ${farmerData.farmName}`);
+      let user = await User.findOne({ email: farmerData.email });
+      if (user) {
+        Object.assign(user, farmerData);
+      } else {
+        user = new User(farmerData);
       }
+      await user.save();
+      console.log(`Updated/Created user: ${farmerData.email}`);
     }
 
     console.log('Seeding complete!');
