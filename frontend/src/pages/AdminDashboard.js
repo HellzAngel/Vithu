@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FiUsers, FiShield, FiCheck, FiX, FiMapPin, FiActivity } from 'react-icons/fi';
+import { FiUsers, FiMapPin } from 'react-icons/fi';
 
 const AdminDashboard = () => {
   const [farmers, setFarmers] = useState([]);
