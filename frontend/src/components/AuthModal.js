@@ -59,7 +59,15 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer', initialMode = 'l
           localStorage.setItem('vithu_token', data.token);
           localStorage.setItem('vithu_user', JSON.stringify(data.user));
           localStorage.setItem('vithu_role', data.user.role);
-          window.location.reload();
+          
+          // Role-based redirection
+          if (data.user.role === 'farmer') {
+            window.location.href = '/dashboard';
+          } else if (data.user.role === 'admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.reload();
+          }
         } else {
           setError(data.message);
         }
@@ -99,7 +107,12 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer', initialMode = 'l
         localStorage.setItem('vithu_token', data.token);
         localStorage.setItem('vithu_user', JSON.stringify(data.user));
         localStorage.setItem('vithu_role', data.user.role);
-        window.location.reload();
+        
+        if (data.user.role === 'farmer') {
+          window.location.href = '/dashboard';
+        } else {
+          window.location.reload();
+        }
       } else {
         setError(data.message);
       }
