@@ -42,13 +42,18 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  const [authInitialMode, setAuthInitialMode] = useState('login');
+
   // Global listeners for modals
   useEffect(() => {
     const handleOpenAuth = (e) => {
-      if (e.detail && typeof e.detail === 'string') {
-        setAuthInitialRole(e.detail);
+      const detail = e.detail || {};
+      if (typeof detail === 'string') {
+        setAuthInitialRole(detail);
+        setAuthInitialMode('register'); // Roles usually trigger register
       } else {
-        setAuthInitialRole('customer');
+        setAuthInitialRole(detail.role || 'customer');
+        setAuthInitialMode(detail.mode || 'login');
       }
       setIsAuthModalOpen(true);
     };
@@ -114,7 +119,13 @@ function App() {
         {isLoading && <LoadingScreen key="loader" />}
       </AnimatePresence>
 
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialRole={authInitialRole} />
+      {/* Global Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        initialRole={authInitialRole}
+        initialMode={authInitialMode}
+      />
 
       {/* Global Confirmation Modal */}
       <AnimatePresence>

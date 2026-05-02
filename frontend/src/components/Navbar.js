@@ -53,8 +53,8 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6">
             {!userRole ? (
               <>
-                <button onClick={() => window.dispatchEvent(new Event('openAuthModal'))} className="text-sm font-black text-gray-500 hover:text-emerald-600 uppercase tracking-widest transition-colors">Login</button>
-                <button onClick={() => window.dispatchEvent(new Event('openAuthModal'))} className="bg-emerald-600 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">Join</button>
+                <button onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'login' } }))} className="text-sm font-black text-gray-500 hover:text-emerald-600 uppercase tracking-widest transition-colors">Login</button>
+                <button onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register' } }))} className="bg-emerald-600 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">Join</button>
               </>
             ) : (
               <div className="flex items-center gap-4">

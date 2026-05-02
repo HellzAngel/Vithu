@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiUser, FiLock, FiMail, FiArrowRight, FiSmartphone, FiMapPin, FiX, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 
-const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
+const AuthModal = ({ isOpen, onClose, initialRole = 'customer', initialMode = 'login' }) => {
   const [role, setRole] = React.useState(initialRole);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [isOtpStep, setIsOtpStep] = useState(false);
   const [isResetStep, setIsResetStep] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,12 +16,13 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   React.useEffect(() => {
     if (isOpen) {
       setRole(initialRole);
+      setIsLogin(initialMode === 'login');
       setIsOtpStep(false);
       setIsResetStep(false);
       setError('');
       setFormData({ name: '', email: '', password: '', phone: '', farmName: '', address: '', city: '', pincode: '', otp: '' });
     }
-  }, [isOpen, initialRole]);
+  }, [isOpen, initialRole, initialMode]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
