@@ -188,14 +188,33 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
           <div className="flex items-center gap-3 mb-4">
              <span className="w-12 h-1 bg-emerald-600 rounded-full" />
              <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-               {isLogin ? 'Authentication' : isOtpStep ? 'Security' : 'Registration'}
+               {isLogin ? 'Choose Portal' : 'Registration'}
              </span>
           </div>
+
+          {/* Role Selector */}
+          <div className="flex p-2 bg-gray-50 rounded-[25px] mb-8 border border-emerald-50">
+             <button 
+               type="button"
+               onClick={() => setRole('customer')}
+               className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${role === 'customer' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-400 hover:text-emerald-500'}`}
+             >
+               Customer Mode
+             </button>
+             <button 
+               type="button"
+               onClick={() => setRole('farmer')}
+               className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${role === 'farmer' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-400 hover:text-emerald-500'}`}
+             >
+               Farmer Portal
+             </button>
+          </div>
+
           <h2 className="text-5xl font-black text-gray-900 tracking-tight leading-none">
-            {isOtpStep ? 'അംഗീകാരം' : isResetStep ? 'റീസെറ്റ്' : isLogin ? 'സ്വാഗതം' : 'രജിസ്റ്റർ'}
+            {isOtpStep ? 'അംഗീകാരം' : isResetStep ? 'റീസെറ്റ്' : isLogin ? (role === 'farmer' ? 'Farmer Login' : 'User Login') : 'രജിസ്റ്റർ'}
           </h2>
           <p className="text-gray-400 font-bold italic mt-3 text-lg">
-            {isOtpStep ? 'Verification Code Sent' : isResetStep ? 'Create a new secure password' : isLogin ? 'Welcome back to വിത്ത്' : `Start your journey as a ${role}`}
+            {isOtpStep ? 'Verification Code Sent' : isResetStep ? 'Create a new secure password' : isLogin ? `Access your ${role} account` : `Start your journey as a ${role}`}
           </p>
         </div>
 
