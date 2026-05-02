@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { FiShoppingBag, FiUser, FiCheckCircle, FiX } from "react-icons/fi";
+import { FiShoppingBag, FiUser, FiCheckCircle, FiX, FiPackage, FiActivity, FiLogOut } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import ThreeBackground from './components/ThreeBackground';
@@ -29,6 +29,15 @@ function App() {
   });
   const [notification, setNotification] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
+  const [userRole, setUserRole] = useState(localStorage.getItem('vithu_role') || null);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setUserRole(localStorage.getItem('vithu_role'));
+    };
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('vithu_cart', JSON.stringify(cart));
@@ -194,11 +203,11 @@ function App() {
                 </div>
 
                 <div className="space-y-4">
-                  {!localStorage.getItem('vithu_role') ? (
+                  {!userRole ? (
                     <div className="bg-emerald-50 p-8 rounded-[40px] mb-8">
                         <h4 className="text-2xl font-black text-emerald-900 mb-2 leading-tight">Join Vithu</h4>
                         <p className="text-emerald-700/60 font-bold text-sm mb-6 italic">Support local farmers.</p>
-                        <button onClick={() => { setIsMenuOpen(false); setIsAuthModalOpen(true); }} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-lg shadow-emerald-100">Get Started</button>
+                        <button onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register' } })); }} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-lg shadow-emerald-100">Get Started</button>
                     </div>
                   ) : (
                     <>
@@ -206,20 +215,31 @@ function App() {
                          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">🌱</div>
                          <div className="relative z-10 text-white">
                             <p className="text-[10px] font-black text-emerald-100 uppercase tracking-[0.2em] mb-1">Welcome back</p>
-                            <h4 className="text-2xl font-black tracking-tight">{localStorage.getItem('vithu_role') === 'farmer' ? 'Farmer Panel' : 'My Account'}</h4>
+                            <h4 className="text-2xl font-black tracking-tight">{userRole === 'farmer' ? 'Farmer Panel' : 'My Account'}</h4>
                          </div>
                       </div>
 
                       <div className="grid gap-3">
-                        <button onClick={() => { window.location.href = '/profile'; setIsMenuOpen(false); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
-                           <FiUser className="text-emerald-600" /> Edit Profile
-                        </button>
-                        <button onClick={() => { window.location.href = '/my-orders'; setIsMenuOpen(false); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
-                           <FiShoppingBag className="text-emerald-600" /> Track Orders
-                        </button>
-                        <button onClick={() => { setIsMenuOpen(false); setIsCartOpen(true); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
-                           <FiShoppingBag className="text-emerald-600" /> My Bucket
-                        </button>
+                        {userRole !== 'admin' && (
+                          <button onClick={() => { window.location.href = '/profile'; setIsMenuOpen(false); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
+                             <FiUser className="text-emerald-600" /> Edit Profile
+                          </button>
+                        )}
+                        {userRole === 'customer' && (
+                          <>
+                            <button onClick={() => { window.location.href = '/my-orders'; setIsMenuOpen(false); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
+                               <FiPackage className="text-emerald-600" /> Track Orders
+                            </button>
+                            <button onClick={() => { setIsMenuOpen(false); setIsCartOpen(true); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
+                               <FiShoppingBag className="text-emerald-600" /> My Bucket
+                            </button>
+                          </>
+                        )}
+                        {userRole === 'admin' && (
+                          <button onClick={() => { window.location.href = '/admin'; setIsMenuOpen(false); }} className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl font-black text-gray-700 hover:bg-emerald-50 transition-all">
+                             <FiActivity className="text-emerald-600" /> Command Center
+                          </button>
+                        )}
                         
                         <div className="pt-8 border-t border-gray-100 mt-4">
                           <button 
@@ -228,14 +248,17 @@ function App() {
                               setConfirmModal({
                                 message: "Do you want to logout from വിത്ത്?",
                                 onConfirm: () => {
+                                  localStorage.removeItem('vithu_token');
+                                  localStorage.removeItem('vithu_user');
                                   localStorage.removeItem('vithu_role');
+                                  setUserRole(null);
                                   window.location.href = '/';
                                 }
                               });
                             }}
                             className="flex items-center gap-4 p-5 w-full text-red-400 font-black hover:bg-red-50 rounded-3xl transition-all"
                           >
-                             <FiX /> Logout
+                             <FiLogOut /> Logout
                           </button>
                         </div>
                       </div>
