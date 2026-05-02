@@ -123,7 +123,7 @@ const Products = () => {
                 <h3 className="text-xl font-black text-gray-900 group-hover:text-emerald-600 transition-colors line-clamp-2">{product.name}</h3>
               </div>
               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-4 flex items-center gap-1">
-                 <FiMapPin className="text-emerald-500" /> {product.farmer}
+                 <FiMapPin className="text-emerald-500" /> {typeof product.farmer === 'object' ? (product.farmer?.farmName || product.farmer?.name) : product.farmer}
               </p>
               
               <div className="mt-auto space-y-6">
