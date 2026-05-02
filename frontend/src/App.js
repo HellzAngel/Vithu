@@ -208,9 +208,12 @@ function App() {
                 <div className="space-y-4">
                   {!userRole ? (
                     <div className="bg-emerald-50 p-8 rounded-[40px] mb-8">
-                        <h4 className="text-2xl font-black text-emerald-900 mb-2 leading-tight">Join Vithu</h4>
-                        <p className="text-emerald-700/60 font-bold text-sm mb-6 italic">Support local farmers.</p>
-                        <button onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register' } })); }} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-lg shadow-emerald-100">Get Started</button>
+                        <h4 className="text-2xl font-black text-emerald-900 mb-2 leading-tight">Welcome to Vithu</h4>
+                        <p className="text-emerald-700/60 font-bold text-sm mb-6 italic">Join our community or sign in.</p>
+                        <div className="grid gap-3">
+                          <button onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register' } })); }} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-lg shadow-emerald-100">Get Started</button>
+                          <button onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'login' } })); }} className="w-full py-4 bg-white text-emerald-600 border border-emerald-100 rounded-2xl font-black">Login to Account</button>
+                        </div>
                     </div>
                   ) : (
                     <>
