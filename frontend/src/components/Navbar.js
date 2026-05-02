@@ -100,8 +100,13 @@ const Navbar = () => {
 
           {/* Mobile Actions */}
           <div className="flex md:hidden items-center gap-2">
-            {userRole && (
-              <button onClick={() => window.dispatchEvent(new Event('openCart'))} className="text-gray-700 p-2 relative"><FiShoppingBag size={22} /><span className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-black">{JSON.parse(localStorage.getItem('vithu_cart') || '[]').length}</span></button>
+            {userRole === 'customer' && (
+              <button onClick={() => window.dispatchEvent(new Event('openCart'))} className="text-gray-700 p-2 relative">
+                <FiShoppingBag size={22} />
+                <span className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-black">
+                  {JSON.parse(localStorage.getItem('vithu_cart') || '[]').length}
+                </span>
+              </button>
             )}
             <button onClick={() => window.dispatchEvent(new Event('toggleMobileMenu'))} className="text-gray-900 p-2 bg-gray-50 rounded-xl">
               <FiMenu size={24} />
