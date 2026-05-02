@@ -135,17 +135,30 @@ const MyOrders = () => {
                </div>
             </div>
             
-            {/* Simple Track Progress */}
-            <div className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between px-2">
-               {['Pending', 'Confirmed', 'Out for Delivery', 'Delivered'].map((step, i) => {
-                 const isActive = ['pending', 'confirmed', 'packed', 'out for delivery', 'delivered'].indexOf(order.status) >= i;
-                 return (
-                   <div key={step} className="flex flex-col items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${isActive ? 'bg-emerald-600' : 'bg-gray-200'}`} />
-                      <span className={`text-[8px] font-black uppercase tracking-wider ${isActive ? 'text-emerald-700' : 'text-gray-300'}`}>{step}</span>
-                   </div>
-                 );
-               })}
+            {/* Enhanced Progress Bar */}
+            <div className="mt-8 pt-8 border-t border-gray-50 relative">
+               <div className="absolute top-[43px] left-10 right-10 h-1 bg-gray-100 rounded-full">
+                  <div 
+                    className="h-full bg-emerald-600 transition-all duration-1000 rounded-full"
+                    style={{ 
+                      width: `${Math.max(0, Math.min(100, (['pending', 'confirmed', 'packed', 'out for delivery', 'delivered'].indexOf(order.status) / 4) * 100))}%` 
+                    }}
+                  />
+               </div>
+               <div className="flex items-center justify-between px-2 relative z-10">
+                  {['Pending', 'Confirmed', 'Packed', 'On the Way', 'Delivered'].map((step, i) => {
+                    const statusMap = ['pending', 'confirmed', 'packed', 'out for delivery', 'delivered'];
+                    const currentIdx = statusMap.indexOf(order.status);
+                    const isActive = currentIdx >= i;
+                    
+                    return (
+                      <div key={step} className="flex flex-col items-center gap-3">
+                         <div className={`w-4 h-4 rounded-full border-4 border-white shadow-md transition-all duration-500 ${isActive ? 'bg-emerald-600 scale-125' : 'bg-gray-200'}`} />
+                         <span className={`text-[8px] font-black uppercase tracking-wider text-center max-w-[50px] ${isActive ? 'text-emerald-700' : 'text-gray-300'}`}>{step}</span>
+                      </div>
+                    );
+                  })}
+               </div>
             </div>
           </motion.div>
         ))}
