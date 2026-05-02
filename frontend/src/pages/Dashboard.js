@@ -23,7 +23,7 @@ const Dashboard = () => {
         const pData = await pRes.json();
         if (pData.success) setProducts(pData.products);
 
-        const oRes = await fetch(`${baseUrl}/api/orders`, {
+        const oRes = await fetch(`${baseUrl}/api/orders/farmer-orders`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const oData = await oRes.json();
@@ -42,7 +42,7 @@ const Dashboard = () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`${baseUrl}/api/orders/${orderId}`, {
+      const res = await fetch(`${baseUrl}/api/orders/${orderId}/status`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
