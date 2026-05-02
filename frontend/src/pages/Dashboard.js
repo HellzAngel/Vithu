@@ -453,24 +453,37 @@ const Dashboard = () => {
                   <button 
                     onClick={() => {
                       if (navigator.geolocation) {
+                        showNotification("Fetching location... 🛰️");
                         navigator.geolocation.getCurrentPosition(async (pos) => {
-                          const token = localStorage.getItem('vithu_token');
-                          const res = await fetch(`${baseUrl}/api/auth/profile`, {
-                            method: 'PUT',
-                            headers: { 
-                              'Content-Type': 'application/json',
-                              'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ 
-                              lat: pos.coords.latitude, 
-                              lng: pos.coords.longitude 
-                            })
-                          });
-                          if (res.ok) showNotification("GPS Location Updated! 📍");
+                          try {
+                            const token = localStorage.getItem('vithu_token');
+                            const res = await fetch(`${baseUrl}/api/auth/profile`, {
+                              method: 'PUT',
+                              headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                              },
+                              body: JSON.stringify({ 
+                                lat: pos.coords.latitude, 
+                                lng: pos.coords.longitude 
+                              })
+                            });
+                            if (res.ok) {
+                              showNotification("GPS Location Updated! 📍");
+                            } else {
+                              showNotification("Failed to update profile.");
+                            }
+                          } catch (err) {
+                            showNotification("Network error. Try again.");
+                          }
+                        }, (err) => {
+                          showNotification("GPS Denied. Please enable location.");
                         });
+                      } else {
+                        showNotification("GPS not supported by your browser.");
                       }
                     }}
-                    className="w-full md:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all"
+                    className="w-full md:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-100"
                   >
                     Update GPS Location
                   </button>
