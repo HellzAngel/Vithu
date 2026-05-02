@@ -69,19 +69,19 @@ const FarmerMap = () => {
   }, [baseUrl]);
 
   return (
-    <div className="w-full h-[650px] rounded-[50px] overflow-hidden shadow-2xl border-[12px] border-white relative group font-sans">
+    <div className="w-full h-[400px] md:h-[650px] rounded-[30px] md:rounded-[50px] overflow-hidden shadow-2xl border-4 md:border-[12px] border-white relative group font-sans">
       
-      {/* Swiggy Style Search/Top Bar */}
-      <div className="absolute top-8 left-8 right-8 z-[1000] flex gap-4 pointer-events-none">
-        <div className="bg-white/90 backdrop-blur-xl px-6 py-4 rounded-[25px] shadow-2xl border border-white flex items-center gap-4 flex-1 pointer-events-auto">
-           <FiSearch className="text-emerald-600" />
-           <input type="text" placeholder="Search for nearby farmers or products..." className="bg-transparent border-none outline-none w-full font-bold text-sm text-gray-700 placeholder:text-gray-400" />
+      {/* Swiggy Style Search/Top Bar - Hidden on small mobile to save space */}
+      <div className="absolute top-4 md:top-8 left-4 md:left-8 right-4 md:left-8 z-[1000] flex gap-2 md:gap-4 pointer-events-none">
+        <div className="bg-white/90 backdrop-blur-xl px-4 md:px-6 py-3 md:py-4 rounded-2xl md:rounded-[25px] shadow-2xl border border-white flex items-center gap-2 md:gap-4 flex-1 pointer-events-auto">
+           <FiSearch className="text-emerald-600 shrink-0" />
+           <input type="text" placeholder="Search farmers..." className="bg-transparent border-none outline-none w-full font-bold text-xs md:text-sm text-gray-700 placeholder:text-gray-400" />
         </div>
         <button 
           onClick={() => navigator.geolocation.getCurrentPosition((pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }))}
-          className="bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-white text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all pointer-events-auto"
+          className="bg-white/90 backdrop-blur-xl p-3 md:p-4 rounded-xl md:rounded-2xl shadow-2xl border border-white text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all pointer-events-auto"
         >
-          <FiTarget size={20} />
+          <FiTarget size={18} />
         </button>
       </div>
 
@@ -89,6 +89,8 @@ const FarmerMap = () => {
         center={userLocation || [10.8505, 76.2711]} 
         zoom={13} 
         zoomControl={false}
+        dragging={!L.Browser.mobile} // Disable dragging on mobile to allow page scroll
+        touchZoom={true}
         className="w-full h-full z-0"
       >
         {/* Cleaner CartoDB Tile Layer */}
