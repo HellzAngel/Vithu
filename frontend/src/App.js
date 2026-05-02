@@ -33,8 +33,11 @@ function App() {
 
   useEffect(() => {
     const checkAuth = () => {
-      setUserRole(localStorage.getItem('vithu_role'));
+      const savedUser = localStorage.getItem('vithu_user');
+      const role = localStorage.getItem('vithu_role');
+      setUserRole(role || (savedUser ? JSON.parse(savedUser).role : null));
     };
+    checkAuth(); // Initial check
     window.addEventListener('storage', checkAuth);
     return () => window.removeEventListener('storage', checkAuth);
   }, []);

@@ -427,17 +427,17 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-3">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Farm Name</label>
-                    <input type="text" defaultValue="Kerala Organic Farm" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"/>
+                    <input id="setting-farm-name" type="text" defaultValue="Kerala Organic Farm" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-3 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"/>
                   </div>
                   <div className="space-y-3">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
-                    <input type="text" defaultValue="+91 98765 43210" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"/>
+                    <input id="setting-phone" type="text" defaultValue="+91 98765 43210" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-3 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"/>
                   </div>
                 </div>
                 
                 <div className="space-y-3">
                   <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Farm Address</label>
-                  <textarea rows="3" defaultValue="Kuttanad, Alappuzha, Kerala - 688504" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"></textarea>
+                  <textarea id="setting-address" rows="3" defaultValue="Kuttanad, Alappuzha, Kerala - 688504" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-3 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"></textarea>
                 </div>
 
                 <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
@@ -546,7 +546,29 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <button className="bg-emerald-600 text-white px-10 py-5 rounded-[20px] font-black hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all active:scale-95">
+                <button 
+                  onClick={async () => {
+                    const farmName = document.getElementById('setting-farm-name').value;
+                    const phone = document.getElementById('setting-phone').value;
+                    const address = document.getElementById('setting-address').value;
+                    
+                    const token = localStorage.getItem('vithu_token');
+                    const res = await fetch(`${baseUrl}/api/auth/profile`, {
+                      method: 'PUT',
+                      headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                      },
+                      body: JSON.stringify({ 
+                        farmName, 
+                        phone, 
+                        location: { address } 
+                      })
+                    });
+                    if (res.ok) showNotification("Profile Updated Successfully! ✨");
+                  }}
+                  className="bg-emerald-600 text-white w-full md:w-auto px-10 py-4 rounded-[20px] font-black hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all active:scale-95 text-sm uppercase tracking-widest"
+                >
                   Save All Changes
                 </button>
               </div>
