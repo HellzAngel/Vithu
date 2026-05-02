@@ -440,53 +440,99 @@ const Dashboard = () => {
                   <textarea rows="3" defaultValue="Kuttanad, Alappuzha, Kerala - 688504" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"></textarea>
                 </div>
 
-                <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm">
-                       <FiMapPin size={24} />
+                <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm">
+                         <FiMapPin size={24} />
+                      </div>
+                      <div>
+                        <p className="font-black text-emerald-900">Map Coordinates</p>
+                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Pin your farm on the live map</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-black text-emerald-900">Map Coordinates</p>
-                      <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Pin your farm on the live map</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      if (navigator.geolocation) {
-                        showNotification("Fetching location... 🛰️");
-                        navigator.geolocation.getCurrentPosition(async (pos) => {
-                          try {
-                            const token = localStorage.getItem('vithu_token');
-                            const res = await fetch(`${baseUrl}/api/auth/profile`, {
-                              method: 'PUT',
-                              headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                              },
-                              body: JSON.stringify({ 
-                                lat: pos.coords.latitude, 
-                                lng: pos.coords.longitude 
-                              })
-                            });
-                            if (res.ok) {
-                              showNotification("GPS Location Updated! 📍");
-                            } else {
-                              showNotification("Failed to update profile.");
+                    <button 
+                      onClick={() => {
+                        if (navigator.geolocation) {
+                          showNotification("Fetching location... 🛰️");
+                          navigator.geolocation.getCurrentPosition(async (pos) => {
+                            try {
+                              const token = localStorage.getItem('vithu_token');
+                              const res = await fetch(`${baseUrl}/api/auth/profile`, {
+                                method: 'PUT',
+                                headers: { 
+                                  'Content-Type': 'application/json',
+                                  'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ 
+                                  lat: pos.coords.latitude, 
+                                  lng: pos.coords.longitude 
+                                })
+                              });
+                              if (res.ok) {
+                                showNotification("GPS Location Updated! 📍");
+                              } else {
+                                showNotification("Failed to update profile.");
+                              }
+                            } catch (err) {
+                              showNotification("Network error. Try again.");
                             }
-                          } catch (err) {
-                            showNotification("Network error. Try again.");
-                          }
-                        }, (err) => {
-                          showNotification("GPS Denied. Please enable location.");
+                          }, (err) => {
+                            showNotification("GPS Blocked. Use manual entry below.");
+                          });
+                        } else {
+                          showNotification("GPS not supported.");
+                        }
+                      }}
+                      className="w-full md:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-100"
+                    >
+                      Use Live GPS
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-emerald-900/40 uppercase tracking-widest ml-1">Latitude</label>
+                      <input 
+                        type="number" 
+                        step="0.000001"
+                        placeholder="e.g. 9.4981" 
+                        id="manual-lat"
+                        className="w-full bg-white border border-emerald-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-emerald-900/40 uppercase tracking-widest ml-1">Longitude</label>
+                      <input 
+                        type="number" 
+                        step="0.000001"
+                        placeholder="e.g. 76.3388" 
+                        id="manual-lng"
+                        className="w-full bg-white border border-emerald-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all"
+                      />
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        const lat = document.getElementById('manual-lat').value;
+                        const lng = document.getElementById('manual-lng').value;
+                        if (!lat || !lng) return showNotification("Enter both coordinates!");
+                        
+                        const token = localStorage.getItem('vithu_token');
+                        const res = await fetch(`${baseUrl}/api/auth/profile`, {
+                          method: 'PUT',
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
+                          body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) })
                         });
-                      } else {
-                        showNotification("GPS not supported by your browser.");
-                      }
-                    }}
-                    className="w-full md:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-100"
-                  >
-                    Update GPS Location
-                  </button>
+                        if (res.ok) showNotification("Manual Location Saved! 📍");
+                      }}
+                      className="col-span-2 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all mt-2"
+                    >
+                      Save Manual Coordinates
+                    </button>
+                  </div>
                 </div>
 
                 <div className="pt-6 border-t border-gray-100">
