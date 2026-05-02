@@ -16,7 +16,7 @@ import MyOrders from './pages/MyOrders';
 import Profile from './pages/Profile';
 import AuthModal from './components/AuthModal';
 
-
+const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
