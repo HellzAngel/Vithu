@@ -7,6 +7,14 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const userStr = localStorage.getItem('vithu_user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/';
+      return;
+    }
+
     const fetchFarmers = async () => {
       const token = localStorage.getItem('vithu_token');
       try {

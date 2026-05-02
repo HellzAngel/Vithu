@@ -9,9 +9,9 @@ const seedFarmers = async () => {
 
     const demoFarmers = [
       {
-        name: 'Vithu Admin',
-        email: 'admin@vithu.com',
-        password: 'adminpassword',
+        name: 'Vithu Global Admin',
+        email: 'vithuadmin',
+        password: 'vithu@admin',
         role: 'admin',
         isApproved: true,
         isVerified: true
