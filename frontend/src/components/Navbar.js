@@ -7,15 +7,20 @@ import Logo from './Logo';
 
 const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = React.useState(false);
-  const [userRole, setUserRole] = React.useState(localStorage.getItem('vithu_role') || null);
+  const [user, setUser] = React.useState(() => {
+    const saved = localStorage.getItem('vithu_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const userRole = user?.role || null;
 
   React.useEffect(() => {
-    const checkRole = () => {
-      setUserRole(localStorage.getItem('vithu_role'));
+    const handleAuthChange = () => {
+      const saved = localStorage.getItem('vithu_user');
+      setUser(saved ? JSON.parse(saved) : null);
     };
-    window.addEventListener('storage', checkRole);
-    // Also listen for local custom login events if any
-    return () => window.removeEventListener('storage', checkRole);
+    window.addEventListener('storage', handleAuthChange);
+    return () => window.removeEventListener('storage', handleAuthChange);
   }, []);
 
   const handleLogout = () => {
@@ -27,7 +32,7 @@ const Navbar = () => {
           localStorage.removeItem('vithu_token');
           localStorage.removeItem('vithu_user');
           localStorage.removeItem('vithu_role');
-          setUserRole(null);
+          setUser(null);
           window.location.href = '/';
         }
       }
@@ -41,6 +46,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-3 group shrink-0">
             <Logo />
             <span className="text-2xl font-black text-emerald-600 group-hover:text-emerald-500 transition-colors tracking-tighter">വിത്ത്</span>
+            <span className="hidden">v1.2.1-admin-fix</span>
           </Link>
 
           {/* Desktop Right Actions */}
