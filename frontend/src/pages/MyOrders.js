@@ -11,8 +11,9 @@ const MyOrders = () => {
     // Simulate fetching user orders from backend
     const fetchOrders = async () => {
       try {
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
         const token = localStorage.getItem('vithu_token');
-        const res = await fetch('https://vithu.onrender.com/api/orders/user', {
+        const res = await fetch(`${baseUrl}/api/orders/myorders`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
