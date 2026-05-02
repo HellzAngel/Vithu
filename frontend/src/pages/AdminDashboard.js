@@ -6,7 +6,6 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('pending');
   const [farmers, setFarmers] = useState([]);
   const [reportedFarmers, setReportedFarmers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
@@ -35,8 +34,6 @@ const AdminDashboard = () => {
         if (rData.success) setReportedFarmers(rData.reports);
       } catch (err) {
         console.error("Failed to fetch data:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
