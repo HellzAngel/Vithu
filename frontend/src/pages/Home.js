@@ -4,6 +4,8 @@ import { FiArrowRight, FiTruck, FiShield, FiHeart } from 'react-icons/fi';
 import FarmerMap from '../components/FarmerMap';
 
 const Home = () => {
+  const userRole = localStorage.getItem('vithu_role');
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh]">
       {/* Hero Section */}
@@ -24,12 +26,14 @@ const Home = () => {
           <Link to="/products" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
             Start Shopping <FiArrowRight />
           </Link>
-          <button 
-            onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: 'farmer' }))} 
-            className="bg-white hover:bg-gray-50 text-emerald-800 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-md hover:shadow-lg border border-gray-200"
-          >
-            Join as a Farmer
-          </button>
+          {!userRole && (
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register', role: 'farmer' } }))} 
+              className="bg-white hover:bg-gray-50 text-emerald-800 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-md hover:shadow-lg border border-gray-200"
+            >
+              Join as a Farmer
+            </button>
+          )}
         </div>
       </div>
 
