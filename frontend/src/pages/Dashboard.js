@@ -366,9 +366,9 @@ const Dashboard = () => {
                 <h2 className="text-3xl font-black text-gray-900">Inventory Management</h2>
                 <button 
                   onClick={() => openModal('add')}
-                  className="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200"
+                  className="lg:flex-none bg-emerald-600 text-white px-5 py-3 md:px-8 md:py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 text-xs md:text-base"
                 >
-                  <FiPlus className="text-2xl" /> Add New Item
+                  <FiPlus size={18} /> <span className="md:inline">Add Product</span>
                 </button>
               </div>
               
