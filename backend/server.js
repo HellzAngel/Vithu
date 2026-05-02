@@ -10,7 +10,21 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(async () => {
+  const User = require('./models/User');
+  const adminExists = await User.findOne({ role: 'admin' });
+  if (!adminExists) {
+    await User.create({
+      name: 'Vithu Global Admin',
+      email: 'vithuadmin',
+      password: 'vithu@admin', // Will be hashed by pre-save hook
+      role: 'admin',
+      isApproved: true,
+      isVerified: true
+    });
+    console.log('🌾 Initialized Default Admin Account');
+  }
+});
 
 const app = express();
 
