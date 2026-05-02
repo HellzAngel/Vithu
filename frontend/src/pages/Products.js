@@ -15,16 +15,16 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
+  const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('https://vithu.onrender.com/api/products');
+        const res = await fetch(`${baseUrl}/api/products`);
         const data = await res.json();
         if (data.success) {
           setProducts(data.products);
         } else {
-          // Fallback to mock if API fails or is empty for now
           setProducts(MOCK_PRODUCTS);
         }
       } catch (err) {
@@ -32,7 +32,7 @@ const Products = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [baseUrl]);
 
   const handleAddToCart = (product, quantity) => {
     const userRole = localStorage.getItem('vithu_role');
@@ -99,7 +99,10 @@ const Products = () => {
           <div key={product.id} className="bg-white rounded-[40px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group border border-gray-50 flex flex-col h-full">
             <div className="h-64 overflow-hidden relative">
               <img 
-                src={product.image.startsWith("http") ? product.image : "https://vithu.onrender.com" + product.image} 
+                src={product.images && product.images.length > 0 
+                  ? (product.images[0].startsWith("http") ? product.images[0] : baseUrl + product.images[0])
+                  : (product.image && product.image.startsWith("http") ? product.image : baseUrl + product.image)
+                } 
                 alt={product.name} 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               />
