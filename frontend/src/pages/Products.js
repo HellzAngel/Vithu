@@ -49,10 +49,14 @@ const Products = () => {
     window.dispatchEvent(new CustomEvent('notify', { detail: `${product.name} added to cart! 🛒` }));
   };
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const farmerFilter = queryParams.get('farmer');
+
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'All' || p.category === category;
-    return matchesSearch && matchesCategory;
+    const matchesFarmer = !farmerFilter || p.farmer?._id === farmerFilter || p.farmer === farmerFilter;
+    return matchesSearch && matchesCategory && matchesFarmer;
   });
 
   return (

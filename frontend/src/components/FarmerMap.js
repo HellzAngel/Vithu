@@ -37,18 +37,13 @@ const FarmerMap = () => {
   const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => setUserLocation({ lat: 10.8505, lng: 76.2711 })
-      );
-    }
-
+    // Initial fetch of farmers
     const fetchFarmers = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${baseUrl}/api/auth/farmers`);
         const data = await res.json();
-        if (data.success) {
+        if (data.success && data.farmers) {
           setFarmers(data.farmers.length > 0 ? data.farmers : [
             { 
               _id: 'mock1', 
@@ -66,6 +61,13 @@ const FarmerMap = () => {
       }
     };
     fetchFarmers();
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => setUserLocation({ lat: 10.8505, lng: 76.2711 })
+      );
+    }
   }, [baseUrl]);
 
   return (
