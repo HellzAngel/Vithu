@@ -10,7 +10,8 @@ const AdminDashboard = () => {
     const fetchFarmers = async () => {
       const token = localStorage.getItem('vithu_token');
       try {
-        const res = await fetch('https://vithu.onrender.com/api/admin/farmers', {
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+        const res = await fetch(`${baseUrl}/api/admin/farmers`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -29,13 +30,19 @@ const AdminDashboard = () => {
   const handleToggleApproval = async (id) => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`https://vithu.onrender.com/api/admin/farmers/${id}/approve`, {
+      const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+      const res = await fetch(`${baseUrl}/api/admin/farmers/${id}/approve`, {
         method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
       const data = await res.json();
       if (data.success) {
         setFarmers(farmers.map(f => f._id === id ? { ...f, isApproved: data.isApproved } : f));
+      } else {
+        alert(data.message || "Approval failed. Are you logged in as an Admin?");
       }
     } catch (err) {
       alert("Error updating status");
