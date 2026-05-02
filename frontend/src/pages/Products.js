@@ -100,7 +100,7 @@ const Products = () => {
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="bg-white rounded-[40px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group border border-gray-50 flex flex-col h-full">
+          <div key={product._id || product.id} className="bg-white rounded-[40px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group border border-gray-50 flex flex-col h-full">
             <div className="h-64 overflow-hidden relative">
               <img 
                 src={product.images && product.images.length > 0 
@@ -123,7 +123,11 @@ const Products = () => {
                 <h3 className="text-xl font-black text-gray-900 group-hover:text-emerald-600 transition-colors line-clamp-2">{product.name}</h3>
               </div>
               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-4 flex items-center gap-1">
-                 <FiMapPin className="text-emerald-500" /> {typeof product.farmer === 'object' ? (product.farmer?.farmName || product.farmer?.name) : product.farmer}
+                 <FiMapPin className="text-emerald-500" /> {
+                   typeof product.farmer === 'object' 
+                    ? (product.farmer?.farmName || product.farmer?.name || "Local Farmer") 
+                    : (product.farmer || "Local Farmer")
+                 }
               </p>
               
               <div className="mt-auto space-y-6">
@@ -132,7 +136,7 @@ const Products = () => {
                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Quantity ({product.unit})</span>
                      <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-1 px-3 mt-1 border border-emerald-50">
                         <input 
-                          id={`qty-${product.id}`}
+                          id={`qty-${product._id || product.id}`}
                           type="number" 
                           defaultValue="1" 
                           min="1" 
@@ -148,7 +152,7 @@ const Products = () => {
 
                 <button 
                   onClick={() => {
-                    const qty = parseInt(document.getElementById(`qty-${product.id}`).value) || 1;
+                    const qty = parseInt(document.getElementById(`qty-${product._id || product.id}`).value) || 1;
                     handleAddToCart(product, qty);
                   }}
                   className="w-full py-5 rounded-[25px] bg-emerald-600 text-white font-black hover:bg-emerald-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-emerald-100 hover:shadow-emerald-200 active:scale-95"
