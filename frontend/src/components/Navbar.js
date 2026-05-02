@@ -60,6 +60,8 @@ const Navbar = () => {
               <div className="flex items-center gap-4">
                 {userRole === 'admin' ? (
                    <Link to="/admin" className="text-sm font-black text-emerald-600 uppercase tracking-widest hover:underline">Command Center</Link>
+                ) : userRole === 'farmer' ? (
+                   <Link to="/dashboard" className="text-sm font-black text-emerald-600 uppercase tracking-widest hover:underline">Farmer Panel</Link>
                 ) : (
                   <>
                     <button onClick={() => window.location.href = '/my-orders'} className="text-gray-700 hover:text-emerald-600 p-2 transition-all" title="Track Orders"><FiPackage size={22} /></button>
@@ -80,6 +82,8 @@ const Navbar = () => {
                         <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="absolute right-0 mt-4 w-56 bg-white rounded-[30px] shadow-2xl border border-emerald-50 p-3 overflow-hidden z-50">
                            {userRole === 'admin' ? (
                              <button onClick={() => { window.location.href = '/admin'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiActivity size={18} /> Admin Panel</button>
+                           ) : userRole === 'farmer' ? (
+                             <button onClick={() => { window.location.href = '/dashboard'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiPackage size={18} /> Farmer Panel</button>
                            ) : (
                              <button onClick={() => { window.location.href = '/profile'; setIsProfileOpen(false); }} className="w-full flex items-center gap-3 px-5 py-4 text-sm font-black text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"><FiUser size={18} /> Edit Profile</button>
                            )}
