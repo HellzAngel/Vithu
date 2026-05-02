@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPackage, FiSettings, FiLogOut, FiPlus, FiShoppingCart, FiTrendingUp, FiDollarSign, FiClock } from 'react-icons/fi';
+import { FiPackage, FiSettings, FiLogOut, FiPlus, FiShoppingCart, FiTrendingUp, FiDollarSign, FiClock, FiMapPin } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
