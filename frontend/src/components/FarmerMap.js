@@ -135,17 +135,38 @@ const FarmerMap = () => {
                   <h3 className="text-2xl font-black text-gray-900">{selectedFarmer.farmName || selectedFarmer.name}</h3>
                   <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1"><FiStar fill="currentColor" /> {selectedFarmer.rating || '4.5'}</span>
                 </div>
-                <p className="text-gray-400 font-bold text-sm mb-4 flex items-center justify-center md:justify-start gap-2"><FiMapPin className="text-emerald-500" /> {selectedFarmer.location.city} • 2.4 km away</p>
-                <div className="flex items-center justify-center md:justify-start gap-6">
-                   <div className="flex items-center gap-2">
-                      <FiClock className="text-emerald-600" />
-                      <span className="text-xs font-black text-gray-600">Arrives in 30 mins</span>
-                   </div>
-                   <div className="flex items-center gap-2">
-                      <FiNavigation className="text-emerald-600" />
-                      <span className="text-xs font-black text-gray-600 underline">Get Directions</span>
-                   </div>
-                </div>
+                {userLocation && selectedFarmer.location?.coordinates && (
+                  (() => {
+                    const R = 6371; // Earth radius in km
+                    const dLat = (selectedFarmer.location.coordinates.lat - userLocation.lat) * Math.PI / 180;
+                    const dLon = (selectedFarmer.location.coordinates.lng - userLocation.lng) * Math.PI / 180;
+                    const a = 
+                      Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(userLocation.lat * Math.PI / 180) * Math.cos(selectedFarmer.location.coordinates.lat * Math.PI / 180) * 
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    const distance = R * c;
+                    const arrivalTime = Math.round(distance * 3 + 15); // Simple estimate: 3 mins/km + 15 mins base
+
+                    return (
+                      <>
+                        <p className="text-gray-400 font-bold text-sm mb-4 flex items-center justify-center md:justify-start gap-2">
+                          <FiMapPin className="text-emerald-500" /> {selectedFarmer.location.city} • {distance.toFixed(1)} km away
+                        </p>
+                        <div className="flex items-center justify-center md:justify-start gap-6">
+                           <div className="flex items-center gap-2">
+                              <FiClock className="text-emerald-600" />
+                              <span className="text-xs font-black text-gray-600">Arrives in ~{arrivalTime} mins</span>
+                           </div>
+                           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedFarmer.location.coordinates.lat},${selectedFarmer.location.coordinates.lng}`)}>
+                              <FiNavigation className="text-emerald-600" />
+                              <span className="text-xs font-black text-gray-600 underline">Get Directions</span>
+                           </div>
+                        </div>
+                      </>
+                    );
+                  })()
+                )}
              </div>
 
              <button 
