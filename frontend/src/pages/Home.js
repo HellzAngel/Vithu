@@ -23,9 +23,20 @@ const Home = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-          <Link to="/products" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-            Start Shopping <FiArrowRight />
-          </Link>
+          {userRole === 'farmer' ? (
+            <Link to="/dashboard" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              Go to Farmer Panel <FiArrowRight />
+            </Link>
+          ) : userRole === 'admin' ? (
+            <Link to="/admin" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              Command Center <FiArrowRight />
+            </Link>
+          ) : (
+            <Link to="/products" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              Start Shopping <FiArrowRight />
+            </Link>
+          )}
+          
           {!userRole && (
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'register', role: 'farmer' } }))} 
