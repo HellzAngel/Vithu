@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiArrowRight, FiX, FiAlertCircle } from 'react-icons/fi';
+import { FiUser, FiLock, FiMail, FiArrowRight, FiSmartphone, FiMapPin, FiX, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 
 const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   const [role, setRole] = React.useState(initialRole);
@@ -111,7 +111,7 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
 
   const handleForgotPassword = async () => {
     if (!formData.email) {
-      setError("Please enter your email first.");
+      setError("Enter your email first to reset password.");
       return;
     }
     setLoading(true);
@@ -130,7 +130,7 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
         setError(data.message);
       }
     } catch (err) {
-      setError("Failed to send OTP.");
+      setError("Failed to send reset OTP.");
     } finally {
       setLoading(false);
     }
@@ -174,109 +174,130 @@ const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
       />
       
       <motion.div 
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        initial={{ scale: 0.9, opacity: 0, y: 40 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="bg-white rounded-[50px] shadow-2xl p-10 w-full max-w-xl relative overflow-hidden border border-white"
+        className="bg-white/95 backdrop-blur-2xl rounded-[60px] shadow-2xl p-12 w-full max-w-xl relative overflow-hidden border border-white"
       >
-        <button onClick={onClose} className="absolute top-8 right-8 p-3 bg-gray-50 rounded-2xl text-gray-400 hover:text-red-500 transition-all z-10"><FiX /></button>
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-emerald-600 to-emerald-400" />
+        
+        <button onClick={onClose} className="absolute top-10 right-10 p-3 bg-gray-50 rounded-2xl text-gray-400 hover:text-red-500 transition-all z-10 hover:rotate-90">
+          <FiX size={20} />
+        </button>
 
-        <div className="mb-10">
-          <h2 className="text-4xl font-black text-gray-900 tracking-tight">
-            {isOtpStep ? 'അംഗീകാരം' : isResetStep ? 'പുതിയ പാസ്‌വേഡ്' : isLogin ? 'സ്വാഗതം' : 'രജിസ്റ്റർ'}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-4">
+             <span className="w-12 h-1 bg-emerald-600 rounded-full" />
+             <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+               {isLogin ? 'Authentication' : isOtpStep ? 'Security' : 'Registration'}
+             </span>
+          </div>
+          <h2 className="text-5xl font-black text-gray-900 tracking-tight leading-none">
+            {isOtpStep ? 'അംഗീകാരം' : isResetStep ? 'റീസെറ്റ്' : isLogin ? 'സ്വാഗതം' : 'രജിസ്റ്റർ'}
           </h2>
-          <p className="text-gray-400 font-bold italic mt-2">
-            {isOtpStep ? 'Verification Code Sent' : isResetStep ? 'Reset your account password' : isLogin ? 'Welcome back to വിത്ത്' : `Join as a ${role}`}
+          <p className="text-gray-400 font-bold italic mt-3 text-lg">
+            {isOtpStep ? 'Verification Code Sent' : isResetStep ? 'Create a new secure password' : isLogin ? 'Welcome back to വിത്ത്' : `Start your journey as a ${role}`}
           </p>
         </div>
 
         <AnimatePresence mode="wait">
           {error && (
             <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-500 font-bold text-xs"
+              initial={{ height: 0, opacity: 0, y: -10 }}
+              animate={{ height: 'auto', opacity: 1, y: 0 }}
+              exit={{ height: 0, opacity: 0, y: -10 }}
+              className="mb-8 p-5 bg-red-50 border border-red-100 rounded-3xl flex items-center gap-4 text-red-500 font-black text-xs shadow-sm"
             >
-              <FiAlertCircle className="shrink-0 text-lg" /> {error}
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                <FiAlertCircle size={18} />
+              </div>
+              {error}
             </motion.div>
           )}
         </AnimatePresence>
 
         {isOtpStep ? (
-          <form onSubmit={handleVerifyOtp} className="space-y-6">
-             <div className="space-y-2">
-                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Enter 6-digit OTP</label>
-                <input name="otp" required maxLength="6" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-black text-center text-2xl tracking-[1em] outline-none focus:border-emerald-500 transition-all" value={formData.otp} onChange={handleInputChange} />
+          <form onSubmit={handleVerifyOtp} className="space-y-8">
+             <div className="space-y-4">
+                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Secure Verification Code</label>
+                <div className="relative">
+                  <FiSmartphone className="absolute left-6 top-1/2 -translate-y-1/2 text-emerald-500 text-xl" />
+                  <input name="otp" required maxLength="6" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-[30px] pl-16 pr-6 py-5 font-black text-2xl tracking-[0.5em] outline-none focus:border-emerald-500 transition-all shadow-inner" placeholder="000000" value={formData.otp} onChange={handleInputChange} />
+                </div>
              </div>
-             <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all disabled:opacity-50 uppercase tracking-widest text-xs">Verify Account</button>
+             <button type="submit" disabled={loading} className="w-full py-6 bg-emerald-600 text-white rounded-[30px] font-black shadow-2xl shadow-emerald-200 hover:bg-emerald-700 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
+               {loading ? 'Verifying...' : <>Confirm & Access <FiCheckCircle /></>}
+             </button>
           </form>
         ) : isResetStep ? (
           <form onSubmit={handleResetPassword} className="space-y-6">
-             <div className="space-y-2">
-                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Verification Code</label>
-                <input name="otp" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.otp} onChange={handleInputChange} />
+             <div className="space-y-4">
+                <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">Enter OTP</label>
+                <input name="otp" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-[25px] px-8 py-5 font-bold outline-none focus:border-emerald-500 transition-all" placeholder="Reset Code" value={formData.otp} onChange={handleInputChange} />
              </div>
-             <div className="space-y-2">
+             <div className="space-y-4">
                 <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-2">New Password</label>
-                <input type="password" name="password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.password} onChange={handleInputChange} />
+                <div className="relative">
+                  <FiLock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input type="password" name="password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-[25px] pl-16 pr-6 py-5 font-bold outline-none focus:border-emerald-500 transition-all" placeholder="••••••••" value={formData.password} onChange={handleInputChange} />
+                </div>
              </div>
-             <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all uppercase tracking-widest text-xs">Reset Password</button>
+             <button type="submit" disabled={loading} className="w-full py-6 bg-emerald-600 text-white rounded-[30px] font-black shadow-2xl shadow-emerald-200 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3">
+                {loading ? 'Updating...' : <>Set New Password <FiArrowRight /></>}
+             </button>
           </form>
         ) : (
-          <form onSubmit={handleAuth} className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-5">
             {!isLogin && (
               <>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Full Name</label>
-                    <input name="name" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.name} onChange={handleInputChange} />
+                  <div className="relative">
+                    <FiUser className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input name="name" placeholder="Full Name" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl pl-12 pr-4 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.name} onChange={handleInputChange} />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Phone</label>
-                    <input name="phone" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.phone} onChange={handleInputChange} />
+                  <div className="relative">
+                    <FiSmartphone className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input name="phone" placeholder="Phone" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl pl-12 pr-4 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.phone} onChange={handleInputChange} />
                   </div>
                 </div>
                 {role === 'farmer' && (
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Farm Name</label>
-                    <input name="farmName" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.farmName} onChange={handleInputChange} />
+                  <div className="relative">
+                    <FiMapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input name="farmName" placeholder="Farm Name" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl pl-12 pr-4 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.farmName} onChange={handleInputChange} />
                   </div>
                 )}
                 <div className="grid grid-cols-3 gap-4">
-                   <div className="col-span-2 space-y-1">
-                      <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">City</label>
-                      <input name="city" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.city} onChange={handleInputChange} />
-                   </div>
-                   <div className="space-y-1">
-                      <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Pincode</label>
-                      <input name="pincode" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.pincode} onChange={handleInputChange} />
-                   </div>
+                   <input name="city" placeholder="City" className="col-span-2 bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.city} onChange={handleInputChange} />
+                   <input name="pincode" placeholder="PIN" className="bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.pincode} onChange={handleInputChange} />
                 </div>
               </>
             )}
             
-            <div className="space-y-1">
-              <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Email Address</label>
-              <input type="email" name="email" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.email} onChange={handleInputChange} />
+            <div className="relative">
+              <FiMail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input type="email" name="email" placeholder="Email Address" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl pl-12 pr-4 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.email} onChange={handleInputChange} />
             </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center pr-1">
-                <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Password</label>
-                {isLogin && <button type="button" onClick={handleForgotPassword} className="text-[9px] font-black text-gray-400 hover:text-emerald-600 uppercase tracking-widest transition-all">Forgot?</button>}
+            <div className="space-y-2">
+              <div className="relative">
+                <FiLock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input type="password" name="password" placeholder="Password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl pl-12 pr-4 py-4 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.password} onChange={handleInputChange} />
+                {isLogin && (
+                  <button type="button" onClick={handleForgotPassword} className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 hover:text-emerald-600 uppercase tracking-widest transition-all">
+                    Forgot?
+                  </button>
+                )}
               </div>
-              <input type="password" name="password" required className="w-full bg-gray-50 border-2 border-emerald-50 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500 transition-all" value={formData.password} onChange={handleInputChange} />
             </div>
 
-            <button type="submit" disabled={loading} className="w-full py-5 bg-emerald-600 text-white rounded-[25px] font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all disabled:opacity-50 mt-6 flex items-center justify-center gap-3">
+            <button type="submit" disabled={loading} className="w-full py-6 bg-emerald-600 text-white rounded-[30px] font-black shadow-2xl shadow-emerald-200 hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-50 mt-4 flex items-center justify-center gap-3">
                {loading ? 'Processing...' : (
                  <>{isLogin ? 'Login Now' : 'Create Account'} <FiArrowRight /></>
                )}
             </button>
 
-            <div className="text-center mt-8">
-               <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-emerald-600 transition-all">
-                  {isLogin ? "Don't have an account? Join" : "Already have an account? Login"}
+            <div className="text-center mt-10">
+               <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-emerald-600 transition-all flex items-center justify-center gap-2 mx-auto">
+                  {isLogin ? "New to വിത്ത്? Create an account" : "Already have an account? Login here"}
                </button>
             </div>
           </form>
