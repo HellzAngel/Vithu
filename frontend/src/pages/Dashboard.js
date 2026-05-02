@@ -11,17 +11,19 @@ const Dashboard = () => {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
 
+  const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('vithu_token');
       try {
-        const pRes = await fetch('https://vithu.onrender.com/api/products', {
+        const pRes = await fetch(`${baseUrl}/api/products`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const pData = await pRes.json();
         if (pData.success) setProducts(pData.products);
 
-        const oRes = await fetch('https://vithu.onrender.com/api/orders', {
+        const oRes = await fetch(`${baseUrl}/api/orders`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const oData = await oRes.json();
@@ -31,7 +33,7 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [baseUrl]);
 
   const showNotification = (msg) => {
     window.dispatchEvent(new CustomEvent('notify', { detail: msg }));
@@ -40,7 +42,7 @@ const Dashboard = () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`https://vithu.onrender.com/api/orders/${orderId}`, {
+      const res = await fetch(`${baseUrl}/api/orders/${orderId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ const Dashboard = () => {
   const handleDeleteProduct = async () => {
     const token = localStorage.getItem('vithu_token');
     try {
-      const res = await fetch(`https://vithu.onrender.com/api/products/${selectedProduct.id || selectedProduct._id}`, {
+      const res = await fetch(`${baseUrl}/api/products/${selectedProduct.id || selectedProduct._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -100,7 +102,7 @@ const Dashboard = () => {
       const imgFormData = new FormData();
       imgFormData.append('images', imageFile);
       try {
-        const uploadRes = await fetch('https://vithu.onrender.com/api/upload', {
+        const uploadRes = await fetch(`${baseUrl}/api/upload`, {
           method: 'POST',
           body: imgFormData,
           // Multer handles multipart, don't set Content-Type
@@ -127,8 +129,8 @@ const Dashboard = () => {
     try {
       const method = modalType === 'add' ? 'POST' : 'PUT';
       const url = modalType === 'add' 
-        ? 'https://vithu.onrender.com/api/products' 
-        : `https://vithu.onrender.com/api/products/${selectedProduct.id || selectedProduct._id}`;
+        ? `${baseUrl}/api/products` 
+        : `${baseUrl}/api/products/${selectedProduct.id || selectedProduct._id}`;
 
       const res = await fetch(url, {
         method,
@@ -385,7 +387,7 @@ const Dashboard = () => {
                       <tr key={product.id} className="bg-gray-50/50 rounded-3xl hover:bg-white hover:shadow-2xl transition-all group">
                         <td className="px-6 py-6 rounded-l-[30px] flex items-center gap-6 border-l border-t border-b border-transparent group-hover:border-emerald-100">
                           <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border-2 border-white">
-                             <img src={product.image.startsWith("http") ? product.image : "https://vithu.onrender.com" + product.image} alt={product.name} className="w-full h-full object-cover"/>
+                             <img src={product.image.startsWith("http") ? product.image : baseUrl + product.image} alt={product.name} className="w-full h-full object-cover"/>
                           </div>
                           <div>
                             <p className="font-black text-gray-900 text-lg">{product.name}</p>
@@ -428,6 +430,42 @@ const Dashboard = () => {
                 <div className="space-y-3">
                   <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Farm Address</label>
                   <textarea rows="3" defaultValue="Kuttanad, Alappuzha, Kerala - 688504" className="w-full bg-gray-50 border-2 border-emerald-50 rounded-2xl px-6 py-4 font-bold text-gray-800 outline-none focus:border-emerald-500 transition-all shadow-sm"></textarea>
+                </div>
+
+                <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm">
+                       <FiMapPin size={24} />
+                    </div>
+                    <div>
+                      <p className="font-black text-emerald-900">Map Coordinates</p>
+                      <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Pin your farm on the live map</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(async (pos) => {
+                          const token = localStorage.getItem('vithu_token');
+                          const res = await fetch(`${baseUrl}/api/auth/profile`, {
+                            method: 'PUT',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ 
+                              lat: pos.coords.latitude, 
+                              lng: pos.coords.longitude 
+                            })
+                          });
+                          if (res.ok) showNotification("GPS Location Updated! 📍");
+                        });
+                      }
+                    }}
+                    className="w-full md:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all"
+                  >
+                    Update GPS Location
+                  </button>
                 </div>
 
                 <div className="pt-6 border-t border-gray-100">

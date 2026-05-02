@@ -147,11 +147,31 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/me
-// @desc    Get user profile
+// @route   PUT /api/auth/profile
+// @desc    Update user profile
 // @access  Private
-router.get('/me', protect, async (req, res) => {
-  res.json({ success: true, user: req.user });
+router.put('/profile', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const { name, phone, farmName, location, lat, lng } = req.body;
+    
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (farmName) user.farmName = farmName;
+    if (location) user.location = { ...user.location, ...location };
+    
+    if (lat && lng) {
+      if (!user.location) user.location = {};
+      user.location.coordinates = { lat, lng };
+    }
+
+    await user.save();
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // @route   GET /api/auth/farmers
