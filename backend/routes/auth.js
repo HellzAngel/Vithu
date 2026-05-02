@@ -170,4 +170,24 @@ router.get('/farmers', async (req, res) => {
   }
 });
 
+// @route   POST /api/auth/report-farmer/:id
+// @desc    Report a farmer
+// @access  Private
+router.post('/report-farmer/:id', protect, async (req, res) => {
+  try {
+    const farmer = await User.findById(req.params.id);
+    if (!farmer) return res.status(404).json({ success: false, message: 'Farmer not found' });
+    
+    farmer.reports.push({
+      customer: req.user._id,
+      reason: req.body.reason
+    });
+    
+    await farmer.save();
+    res.json({ success: true, message: 'Farmer reported successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

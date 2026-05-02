@@ -114,8 +114,25 @@ const FarmerMap = () => {
                 <div className="p-2">
                   <h4 className="font-black text-emerald-900 text-lg">{farmer.farmName || farmer.name}</h4>
                   <p className="text-xs text-gray-500 mb-3">{farmer.location.city}</p>
-                  <button className="w-full py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all flex items-center justify-center gap-2">
-                    <FiNavigation /> View Products
+                  <button 
+                    onClick={() => {
+                      const reason = prompt("Enter reason for reporting this farmer:");
+                      if (reason) {
+                        const token = localStorage.getItem('vithu_token');
+                        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://vithu.onrender.com';
+                        fetch(`${baseUrl}/api/auth/report-farmer/${farmer._id}`, {
+                          method: 'POST',
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
+                          body: JSON.stringify({ reason })
+                        }).then(() => alert("Reported to Admin."));
+                      }
+                    }}
+                    className="w-full mt-2 py-2 text-red-500 text-[9px] font-black uppercase tracking-widest hover:bg-red-50 rounded-xl transition-all"
+                  >
+                    Report Farmer
                   </button>
                 </div>
               </Popup>

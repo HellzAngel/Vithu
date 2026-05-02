@@ -41,4 +41,35 @@ router.put('/farmers/:id/approve', protect, admin, async (req, res) => {
   }
 });
 
+// @route   PUT /api/admin/farmers/:id/suspend
+// @desc    Suspend/Unsuspend a user
+// @access  Private/Admin
+router.put('/farmers/:id/suspend', protect, admin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    
+    user.isSuspended = !user.isSuspended;
+    await user.save();
+    
+    res.json({ success: true, isSuspended: user.isSuspended });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   GET /api/admin/reports
+// @desc    Get all reported farmers
+// @access  Private/Admin
+router.get('/reports', protect, admin, async (req, res) => {
+  try {
+    const reportedFarmers = await User.find({ role: 'farmer', 'reports.0': { $exists: true } })
+      .populate('reports.customer', 'name email')
+      .select('name farmName reports isSuspended');
+    res.json({ success: true, reports: reportedFarmers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

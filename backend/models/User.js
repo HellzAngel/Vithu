@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
   },
   isVerified: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false }, // Admin approval for farmers
+  isSuspended: { type: Boolean, default: false },
+  reports: [{
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    reason: { type: String },
+    date: { type: Date, default: Date.now }
+  }],
   otp: { type: String },
   otpExpires: { type: Date },
   rating: { type: Number, default: 0 },
