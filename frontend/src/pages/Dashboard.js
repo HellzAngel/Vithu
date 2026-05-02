@@ -386,8 +386,16 @@ const Dashboard = () => {
                     {products.map((product) => (
                       <tr key={product.id} className="bg-gray-50/50 rounded-3xl hover:bg-white hover:shadow-2xl transition-all group">
                         <td className="px-6 py-6 rounded-l-[30px] flex items-center gap-6 border-l border-t border-b border-transparent group-hover:border-emerald-100">
-                          <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border-2 border-white">
-                             <img src={product.image.startsWith("http") ? product.image : baseUrl + product.image} alt={product.name} className="w-full h-full object-cover"/>
+                          <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border-2 border-white bg-gray-50 flex items-center justify-center">
+                             {product.images && product.images.length > 0 ? (
+                               <img 
+                                 src={product.images[0].startsWith("http") ? product.images[0] : baseUrl + product.images[0]} 
+                                 alt={product.name} 
+                                 className="w-full h-full object-cover"
+                               />
+                             ) : (
+                               <span className="text-2xl opacity-20">🌱</span>
+                             )}
                           </div>
                           <div>
                             <p className="font-black text-gray-900 text-lg">{product.name}</p>
