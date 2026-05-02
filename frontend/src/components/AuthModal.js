@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUser, FiLock, FiMail, FiArrowRight, FiSmartphone, FiMapPin, FiX, FiAlertCircle } from 'react-icons/fi';
+import { FiArrowRight, FiX, FiAlertCircle } from 'react-icons/fi';
 
 const AuthModal = ({ isOpen, onClose, initialRole = 'customer' }) => {
   const [role, setRole] = React.useState(initialRole);
